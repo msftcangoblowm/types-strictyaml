@@ -100,7 +100,7 @@ jobs:
         NAME: mypy
         LABEL: 'mypy'
         STATUS: ${{ steps.mypy_run.outputs.status }}
-        COLOR: ${{ jobs.mypy.result == 'success' && 'green' || 'red' }}
+        COLOR: ${{ steps.mypy_run.outputs.status == 'passed' && 'green' || 'red' }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   pyright:
@@ -145,7 +145,7 @@ jobs:
         NAME: pyright
         LABEL: 'pyright'
         STATUS: ${{ steps.pyright_run.outputs.status }} # Uses the job result directly
-        COLOR: ${{ jobs.pyright.result == 'success' && 'green' || 'red' }}
+        COLOR: ${{ steps.pyright_run.outputs.status == 'passed' && 'green' || 'red' }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   rst2html5:

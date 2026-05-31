@@ -18,6 +18,7 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - [ci] within a job jobs.jobname.result unavailable
    - [feat] strictyaml stubs against both mypy and pyright
    - [feat] initial pytest tests to confirm stubs
    - [ci] status badges for mypy pyright tests
