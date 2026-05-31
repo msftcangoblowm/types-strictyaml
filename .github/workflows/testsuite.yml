@@ -53,7 +53,7 @@ jobs:
         - '3.12'
         - '3.13'
         - '3.14'
-        - pypy-3.11
+        # - pypy-3.11 mypy's librt doesn't support pypy
       fail-fast: false
 
     steps:
