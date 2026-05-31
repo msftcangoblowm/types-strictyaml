@@ -1,0 +1,5 @@
+colorama>=0.4.6; platform_system=="Windows"
+importlib-metadata>=9.0.0
+
+auditwheel
+cibuildwheel  # .github/workflows/kit.yml

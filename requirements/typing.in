@@ -1,0 +1,6 @@
+# shared by both mypy and pyright
+pytest>=9.0.3
+pytest-mypy-plugins>=4.0.3
+typing_extensions>=4.15.0
+types-jsonschema
+types-lxml

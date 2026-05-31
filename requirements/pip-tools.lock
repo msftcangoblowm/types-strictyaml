@@ -1,0 +1,57 @@
+appdirs==1.4.4
+    # via logging-strict
+attrs==26.1.0
+    # via logging-strict
+build==1.4.4
+    # via pip-tools
+click==8.3.3
+    # via
+    #   pip-tools
+    #   wreck
+importlib-metadata==9.0.0
+    # via
+    #   logging-strict
+    #   wreck
+importlib-resources==7.1.0
+    # via logging-strict
+logging-strict==1.6.1
+    # via wreck
+packaging==26.1
+    # via
+    #   build
+    #   pip-requirements-parser
+    #   wheel
+    #   wreck
+pip-requirements-parser==32.0.1
+    # via wreck
+pip-tools==7.5.3
+    # via
+    #   -r requirements/pip-tools.in
+    #   wreck
+pyparsing==3.3.2
+    # via pip-requirements-parser
+pyproject-hooks==1.2.0
+    # via
+    #   build
+    #   pip-tools
+python-dateutil==2.9.0.post0
+    # via
+    #   logging-strict
+    #   strictyaml
+six==1.17.0
+    # via python-dateutil
+strictyaml==1.7.3
+    # via logging-strict
+tomli==2.4.1 ; python_version < "3.11"
+    # via
+    #   build
+    #   logging-strict
+    #   pip-tools
+typing-extensions==4.15.0
+    # via logging-strict
+wheel==0.47.0
+    # via pip-tools
+wreck==0.3.6.post0
+    # via -r requirements/pip-tools.in
+zipp==3.21.0
+    # via importlib-metadata

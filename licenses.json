@@ -1,0 +1,30 @@
+[
+  {
+    "Author": "Gustavo Niemeyer",
+    "Description": "Extensions to the standard Python datetime module",
+    "License": "Apache Software License; BSD License",
+    "Name": "python-dateutil",
+    "URL": "https://github.com/dateutil/dateutil"
+  },
+  {
+    "Author": "Benjamin Peterson",
+    "Description": "Python 2 and 3 compatibility utilities",
+    "License": "MIT License",
+    "Name": "six",
+    "URL": "https://github.com/benjaminp/six"
+  },
+  {
+    "Author": "Colm O'Connor <colm.oconnor.github@gmail.com>",
+    "Description": "Strict, typed YAML parser",
+    "License": "MIT License",
+    "Name": "strictyaml",
+    "URL": "https://hitchdev.com/strictyaml"
+  },
+  {
+    "Author": "Dave Faulkmore <faulkmore@protonmail.com>",
+    "Description": "Typing stubs for strictyaml",
+    "License": "MIT",
+    "Name": "types-strictyaml",
+    "URL": "UNKNOWN"
+  }
+]

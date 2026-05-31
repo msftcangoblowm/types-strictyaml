@@ -1,0 +1,153 @@
+[build-system]
+requires = ["setuptools>=80.7.1", "wheel", "build"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "types-strictyaml"
+version = "1.7.3.0"
+readme = "README.rst"
+requires-python = ">=3.10"
+description = "Typing stubs for strictyaml"
+dynamic = [
+    "optional-dependencies",
+    "dependencies",
+]
+license = "MIT"
+license-files = [
+    "LICENSE",
+    "NOTICE.txt",
+    "licenses.json",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: End Users/Desktop",
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Typing :: Typed",
+]
+
+authors = [
+    {name = "Dave Faulkmore", email = "faulkmore@protonmail.com"},
+]
+
+maintainers = [
+    {name = "Dave Faulkmore", email = "faulkmore@protonmail.com"},
+]
+
+# Match the version your stubs support
+[tool.setuptools.dynamic]
+dependencies = { file = ['requirements/prod.unlock'] }
+# required by drain-swamp for some unknown reason
+optional-dependencies.toml = { file = [] }
+optional-dependencies.dev = { file = ['requirements/dev.lock'] }
+optional-dependencies.manage = { file = ['requirements/manage.lock'] }
+
+# Search in the root directory
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.package-data]
+"strictyaml-stubs" = ["*.pyi", "py.typed"]
+
+[tool.mypy]
+strict = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_calls = true
+# warn_return_any = true
+disallow_any_generics = true
+
+[tool.pytest.ini_options]
+# Tell pytest-mypy-plugins to use this pyproject.toml for mypy configuration
+addopts = "--mypy-pyproject-toml-file=pyproject.toml"
+# Optional: Specify where your test cases are located if not in the default discovery path
+# testpaths = ["test_cases"]
+
+[tool.pyright]
+typeCheckingMode = "strict"
+pythonVersion = "3.10"
+venvPath = "."
+venv = ".venv"  # venv folder path
+include = ["tests"]
+
+# Exclude common non-source directories
+exclude = ["**/__pycache__", "**/.venv", "**/node_modules"]
+
+executionEnvironments = [
+  { root = "." }
+]
+
+[tool.black]
+include = '\.pyi?$'
+extend-exclude = '''(strictyaml\_stubs/\_version.py)'''
+
+[tool.blackdoc]
+skip_string_normalization = true
+color = false  # affects diffs only
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+force_grid_wrap = 2
+use_parentheses = true
+include_trailing_comma = true
+ensure_newline_before_comments = true
+line_length = 88
+# skip_glob = ["data/*", "data/**/*"]
+
+[tool.flake8]
+max_line_length = 88
+extend_ignore = """
+    E203,
+    E501,
+    W503,
+    W605,
+    W293,
+    W291,
+"""
+exclude = ".venv,.git,.tox,dist,docs,build"
+application-import-names = "strictyaml_stubs,tests"
+
+per-file-ignores = """
+    **/__init__.py:F401,
+"""
+
+[tool.typos.files]
+extend-exclude = [
+    "strictyaml_stubs/data/*",
+    "strictyaml_stubs/data/**/*",
+]
+
+[tool.interrogate]
+color = true
+exclude = [
+    'strictyaml_stubs/_version.py',
+    '.doc',
+    'docs',
+    'build',
+    "dist",
+]
+fail-under = 95
+ignore-init-module = true
+quiet = false
+omit-covered-files = true
+# possible values 0 (minimal output), 1 (-v), 2 (-vv)
+verbose = 2
+
+[tool.pip-licenses]
+from = "mixed"
+
+[tool.wreck]
+create_pins_unlock = false
+
+[[tool.wreck.venvs]]
+venv_base_path = '.venv'
+reqs = [
+    'requirements/prod',
+    'requirements/dev',
+    'requirements/manage',
+    'requirements/tox',
+    'requirements/pip-tools',
+    'requirements/rst2html5',
+]

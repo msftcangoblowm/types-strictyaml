@@ -1,0 +1,5 @@
+# Critical Vulnerability Overview: CVE-2026-22701
+# Time-of-Check-Time-of-Use (TOCTOU) race condition vulnerability
+# Disclosed Jan 2026
+# Affects prior to 3.20.3
+filelock>=3.20.3

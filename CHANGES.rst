@@ -1,0 +1,30 @@
+.. this will be appended to README.rst
+
+Changelog
+=========
+
+..
+
+   Feature request
+   .................
+
+   Known regressions
+   ..................
+
+   - strictyaml.ruamel relies on typing.Any way too much.
+
+   - strictyaml lacks a pytest test suite. Necessitates a fork
+
+   Commit items for NEXT VERSION
+   ..............................
+
+   - [feat] strictyaml stubs against both mypy and pyright
+   - [feat] initial pytest tests to confirm stubs
+   - [ci] status badges for mypy pyright tests
+   - [ci] gh workflows
+   - [chore] requirement files sync using wreck
+   - [chore] Makefile tox.ini tox-req.ini tox-test.ini pre-commit
+
+.. scriv-start-here
+
+.. scriv-end-here

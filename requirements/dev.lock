@@ -1,0 +1,60 @@
+black==26.3.1
+    # via
+    #   -r requirements/dev.in
+    #   blackdoc
+blackdoc==0.4.6
+    # via -r requirements/dev.in
+click==8.3.3
+    # via black
+fastjsonschema==2.21.2
+    # via validate-pyproject
+flake8==7.3.0
+    # via
+    #   -r requirements/dev.in
+    #   flake8-pyi
+    #   flake8-pyproject
+flake8-pyi==26.5.0
+    # via -r requirements/dev.in
+flake8-pyproject==1.2.4
+    # via -r requirements/dev.in
+isort==8.0.1
+    # via -r requirements/dev.in
+markdown-it-py==4.2.0
+    # via rich
+mccabe==0.7.0
+    # via flake8
+mdurl==0.1.2
+    # via markdown-it-py
+more-itertools==11.1.0
+    # via blackdoc
+mypy-extensions==1.1.0
+    # via black
+packaging==26.1
+    # via black
+pathspec==1.1.1
+    # via
+    #   black
+    #   blackdoc
+platformdirs==4.9.6
+    # via black
+pycodestyle==2.14.0
+    # via flake8
+pyflakes==3.4.0
+    # via
+    #   flake8
+    #   flake8-pyi
+pygments==2.19.1
+    # via rich
+pytokens==0.4.1
+    # via black
+rich==15.0.0
+    # via blackdoc
+tomli==2.4.1 ; python_version < "3.11"
+    # via
+    #   black
+    #   blackdoc
+    #   flake8-pyproject
+typing-extensions==4.15.0
+    # via black
+validate-pyproject==0.25
+    # via -r requirements/dev.in

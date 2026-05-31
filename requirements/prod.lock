@@ -1,0 +1,6 @@
+python-dateutil==2.9.0.post0
+    # via strictyaml
+six==1.17.0
+    # via python-dateutil
+strictyaml==1.7.3
+    # via -r requirements/prod.in

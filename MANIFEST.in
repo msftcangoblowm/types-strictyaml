@@ -1,0 +1,20 @@
+# package
+recursive-include tests *.yml
+recursive-include requirements *.in *.unlock *.lock
+
+# mypy
+prune .mypy_cache
+
+# coverage
+exclude coverage.json
+exclude coverage.xml
+exclude .coverage
+
+# git
+graft .git
+
+prune build
+prune dist
+
+global-include *.pyi
+global-include py.typed

@@ -1,0 +1,99 @@
+- case: basic_load_and_dump
+  main: |
+    from strictyaml.representation import YAML
+    from strictyaml import load, as_document
+
+    # Test load returns Any (so no error on attribute access, but type is Any)
+    data = load("key: value")
+    reveal_type(data)  # N: Revealed type is "strictyaml.representation.YAML"
+
+    # Test dump returns str
+    yaml_obj: YAML = as_document({"key": "value"})
+    yaml_str = yaml_obj.as_yaml()
+    reveal_type(yaml_str)  # N: Revealed type is "str"
+
+- case: type_mismatch_on_dump
+  main: |
+    from strictyaml import as_document
+
+    # dump expects Any, but let's ensure it returns str
+    result = as_document([1, 2, 3])
+    reveal_type(result)
+
+    # Force a type error if user expects dump to return dict
+    x = as_document({"a": "b"})
+    reveal_type(x.data)
+  out: |
+    main:5: note: Revealed type is "strictyaml.representation.YAML"
+    main:9: note: Revealed type is "dict[Any, Any] | strictyaml.ruamel.comments.CommentedSeq | str | Any"
+
+- case: from_yaml_str_or_dict
+  main: |
+    from typing import Any, Union, cast
+    from strictyaml.compound import Map, Optional
+    from strictyaml.representation import YAML
+    from strictyaml.scalar import Str, Int
+    from strictyaml.validators import Validator
+    from strictyaml import as_document
+    from typing_extensions import assert_type
+
+    # yaml str; no schema
+    value: str = "a: 1"
+    parser: YAML = YAML(value)
+    d_data = parser.data
+    reveal_type(d_data)
+
+    # dict+schema --> YAML, str, dict
+    d_value = {"a": 1}
+    schema = Map({cast("Union[str, Optional]", Str()): Int()})
+    assert_type(schema, Map)
+    yaml_doc: YAML = as_document(d_value, schema=schema)
+    str_yaml = yaml_doc.as_yaml()
+    assert_type(str_yaml, str)
+    d_data = yaml_doc.data
+    reveal_type(d_data)
+  out: |
+    main:13: note: Revealed type is "dict[Any, Any] | strictyaml.ruamel.comments.CommentedSeq | str | Any"
+    main:23: note: Revealed type is "dict[Any, Any] | strictyaml.ruamel.comments.CommentedSeq | str | Any"
+
+- case: yaml_init_signature_success
+  regex: no
+  main: |
+    from strictyaml.representation import YAML
+    from strictyaml.validators import Validator  # Assuming this import exists for the type
+
+    # Correct: Required 'value' argument provided
+    val_0 = "key: value"
+    y_0 = YAML(val_0)
+
+    # Correct: Required 'value' + optional 'validator'
+    # (Using None as a placeholder if you don't have a concrete Validator instance)
+    val_1 = "key: value"
+    y_1 = YAML(val_1, validator=None)
+
+- case: yaml_init_signature_fail_0
+  regex: no
+  main: |
+    from strictyaml.representation import YAML
+
+    # Error: Missing required 'value' argument
+    y_2 = YAML()  # ER: Missing positional argument "value" *
+
+    # Error: 'label' is not a valid argument for __init__
+    y_3 = YAML("key: value", label="test")  # ER: Unexpected keyword argument "label" *
+  out: |
+    main:7: note: "YAML" defined in "strictyaml.representation"
+
+- case: yaml_init_signature_fail_1
+  regex: no
+  main: |
+    from strictyaml.representation import YAML
+
+    # Error: 'allow_duplicate_keys' is not a valid argument for __init__
+    y_4 = YAML("key: value", allow_duplicate_keys=True)  # ER: Unexpected keyword argument "allow_duplicate_keys" *
+
+    # Error: Unknown argument
+    y_5 = YAML("key: value", unknown_arg=True)  # ER: Unexpected keyword argument "unknown_arg" *
+  out: |
+    main:4: note: "YAML" defined in "strictyaml.representation"
+    main:7: note: "YAML" defined in "strictyaml.representation"

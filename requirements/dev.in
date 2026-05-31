@@ -1,0 +1,9 @@
+# without typing.in
+
+black
+blackdoc
+isort
+flake8
+flake8-pyi
+flake8-pyproject
+validate-pyproject

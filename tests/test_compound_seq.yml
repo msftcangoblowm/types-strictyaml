@@ -1,0 +1,59 @@
+- case: compound_seq_exceptions
+  main: |
+    from typing import cast
+    from strictyaml.compound import Seq
+    from strictyaml.parser import load
+    from strictyaml.representation import YAML
+    from strictyaml.ruamel.comments import CommentedSeq
+    from strictyaml.scalar import Str
+    from typing_extensions import assert_type
+
+    # Seq(validator) not checking validator typing.
+    schema_0 = Seq("Hi!")  # ER: Argument 1 to "Seq" has incompatible type "str"; expected "Validator" *
+
+    yaml_mapping = "a: 1\n"
+    schema_0 = Seq(Str())
+    # this would cause a Runtime Exception, not caught by mypy
+    result_0: YAML = load(yaml_mapping, schema=schema_0)
+    #   narrow typing
+    seq_0 = cast("CommentedSeq", result_0.as_marked_up())
+    assert_type(seq_0, CommentedSeq)
+
+    yaml_seq_empty = "-"
+    # this would cause a Runtime Exception, not caught by mypy
+    result_1: YAML = load(yaml_seq_empty, schema=schema_0)
+    str_data_1 = result_1.as_yaml()
+    assert_type(str_data_1, str)
+    #   narrow typing
+    seq_1 = cast("CommentedSeq", result_1.as_marked_up())
+    assert_type(seq_1, CommentedSeq)
+
+- case: compound_seq_valid
+  main: |
+    from collections.abc import Sequence
+    from typing import cast
+    from strictyaml.compound import Seq
+    from strictyaml.parser import load
+    from strictyaml.representation import YAML
+    from strictyaml.ruamel.comments import CommentedSeq
+    from strictyaml.scalar import Str
+    from strictyaml.validators import Validator
+    from typing_extensions import assert_type
+
+    schema = Seq(Str())
+
+    # repr(schema)
+    assert_type(repr(schema), str)
+
+    # schema.to_yaml
+    assert_type(schema.to_yaml(["1", "2", "3"]), CommentedSeq)
+
+    # schema._validator
+    assert_type(schema._validator, Validator)
+
+    yaml_snippet = "- 1\n- 2\n- 3\n"
+    result: YAML = load(yaml_snippet, schema)
+    d_data = cast("Sequence[str]", result.data)
+    assert_type(d_data[0], str)
+    seq_data = cast("CommentedSeq", result.as_marked_up())
+    assert_type(seq_data, CommentedSeq)

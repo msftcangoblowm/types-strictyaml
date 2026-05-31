@@ -1,0 +1,67 @@
+- case: compound_optional_fail
+  regex: true
+  main: |
+    from typing import Any
+    from strictyaml.compound import Map, Optional
+    from strictyaml.scalar import Bool, Int
+    from typing_extensions import assert_type
+
+    yaml_snippet_0: str = "a: 1"
+    # key must be a str, got float
+    Map({"a": Int(), Optional(1.1, default=False): Bool()})
+    # param Optional.drop_if_none should be bool | None
+    Map({"a": Int(), Optional("b", default=False, drop_if_none="val"): Bool()})
+
+    # optional.default
+    val_optional = Optional("b", default=False)
+    assert_type(val_optional.default, Any | None)
+    # repr(optional)
+    assert_type(repr(val_optional), str)
+  out: |
+    main:8: error: Argument 1 to "Optional" has incompatible type "float"; expected "str" *
+    main:10: error: Argument "drop_if_none" to "Optional" has incompatible type "str"; expected "bool | None" *
+
+- case: compound_optional_bool
+  parametrized:
+  - yaml_snippet: "a: 1"
+    id: "not provided b --> bool"
+  main: |
+    from collections import OrderedDict
+    from typing import cast
+    from strictyaml.compound import Map, Optional
+    from strictyaml.parser import load
+    from strictyaml.representation import YAML
+    from strictyaml.scalar import Bool, Int
+    from typing_extensions import assert_type
+
+    schema = Map({"a": Int(), Optional("b", default=False): Bool()})
+
+    result: YAML = load("{{ yaml_snippet }}", schema)
+    d_data = cast("OrderedDict[str, int | bool]", result.data)
+    assert_type(d_data, OrderedDict[str, int | bool])
+    b_val = cast(bool, d_data["b"])
+    assert_type(b_val, bool)
+
+- case: compound_optional_bool_or_none
+  parametrized:
+  - yaml_snippet: "a: 1"
+    id: "Optional val default --> None"
+  - yaml_snippet: "a: 1, b: false"
+    id: "Optional key/value provided and expected typing (bool)"
+  main: |
+    from collections import OrderedDict
+    from typing import cast
+    from jsonschema.exceptions import ValidationError
+    from strictyaml.compound import Map, Optional
+    from strictyaml.parser import load
+    from strictyaml.representation import YAML
+    from strictyaml.scalar import Bool, EmptyNone, Int
+    from typing_extensions import assert_type
+
+    schema = Map({"a": Int(), Optional("b", default=None, drop_if_none=False): EmptyNone() | Bool()})
+
+    result_2: YAML = load("{{ yaml_snippet }}", schema)
+    d_data_2 = cast("OrderedDict[str, int | bool | None]", result_2.data)
+    assert_type(d_data_2, OrderedDict[str, int | bool | None])
+    b_val_2 = cast("bool | None", d_data_2["b"])
+    assert_type(b_val_2, bool | None)
