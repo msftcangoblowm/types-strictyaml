@@ -18,6 +18,7 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - ci(codeql-analysis): change path src -> strictyaml-stubs
    - ci(testsuite): mypy librt doesn't support pypy
    - ci(codeql-analysis): explicitly specify python-version
    - ci: within a job jobs.jobname.result unavailable
