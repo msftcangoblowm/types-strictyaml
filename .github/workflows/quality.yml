@@ -90,8 +90,10 @@ jobs:
       run: |
         if python -m tox -e mypy; then
             echo "status=passed" >> $GITHUB_OUTPUT
+            echo "color=success" >> $GITHUB_OUTPUT
         else
             echo "status=failed" >> $GITHUB_OUTPUT
+            echo "color=critical" >> $GITHUB_OUTPUT
         fi
 
     - name: Update mypy badge
@@ -100,7 +102,7 @@ jobs:
         NAME: mypy
         LABEL: 'mypy'
         STATUS: ${{ steps.mypy_run.outputs.status }}
-        COLOR: ${{ steps.mypy_run.outputs.status == 'passed' && 'green' || 'red' }}
+        COLOR: ${{ steps.mypy_run.outputs.color }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   pyright:
@@ -135,8 +137,10 @@ jobs:
       run: |
         if python -m tox -e pyright; then
             echo "status=passed" >> $GITHUB_OUTPUT
+            echo "color=success" >> $GITHUB_OUTPUT
         else
             echo "status=failed" >> $GITHUB_OUTPUT
+            echo "color=critical" >> $GITHUB_OUTPUT
         fi
 
     - name: Update pyright badge
@@ -144,8 +148,8 @@ jobs:
       with:
         NAME: pyright
         LABEL: 'pyright'
-        STATUS: ${{ steps.pyright_run.outputs.status }} # Uses the job result directly
-        COLOR: ${{ steps.pyright_run.outputs.status == 'passed' && 'green' || 'red' }}
+        STATUS: ${{ steps.pyright_run.outputs.status }}
+        COLOR: ${{ steps.pyright_run.outputs.color }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   rst2html5:
