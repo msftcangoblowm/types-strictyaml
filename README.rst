@@ -157,9 +157,9 @@ Creates ``NOTICE.txt``, ``licenses.json`` and ``sbom.json``
     :target: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/testsuite.yml
     :alt: test
 
-.. |mypy| image:: https://byob.yarr.is/msftcangoblowm/types-strictyaml/mypy
-   :target: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/quality.yml
+.. |mypy| image:: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/quality-mypy.yml/badge.svg
+   :target: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/quality-mypy.yml
    :alt: mypy status
-.. |pyright| image:: https://byob.yarr.is/msftcangoblowm/types-strictyaml/pyright
-   :target: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/quality.yml
+.. |pyright| image:: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/quality-pyright.yml/badge.svg
+   :target: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/quality-pyright.yml
    :alt: pyright status
