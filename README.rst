@@ -7,6 +7,15 @@ Typing stubs for strictyaml
 |  |last-commit| |downloads|
 |  |license| |maturity|
 
+.. PYVERSIONS
+
+\* Python 3.10 through 3.14
+
+**new in 1.7.3.0**
+
+initial typing testsuite; tested against mypy pyright;
+publish to pypi;
+
 Why?
 -----
 
