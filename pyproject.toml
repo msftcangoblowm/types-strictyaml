@@ -34,6 +34,15 @@ maintainers = [
     {name = "Dave Faulkmore", email = "faulkmore@protonmail.com"},
 ]
 
+[project.urls]
+Homepage = 'https://github.com/msftcangoblowm/types-strictyaml'
+Repository = 'https://github.com/msftcangoblowm/types-strictyaml'
+Source = 'https://github.com/msftcangoblowm/types-strictyaml'
+Changelog = 'https://raw.githubusercontent.com/msftcangoblowm/types-strictyaml/master/CHANGES.rst'
+Releases = 'https://github.com/msftcangoblowm/types-strictyaml/releases'
+Issues = 'https://github.com/msftcangoblowm/types-strictyaml/issues'
+Mastodon = 'https://mastodon.social/@msftcangoblowme'
+
 # Match the version your stubs support
 [tool.setuptools.dynamic]
 dependencies = { file = ['requirements/prod.unlock'] }

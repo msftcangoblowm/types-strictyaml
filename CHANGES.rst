@@ -18,6 +18,7 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - chore: project urls
    - ci: workflow buttons for mypy and pyright
    - ci(quality): fix mypy pyright badges generation
    - ci(codeql-analysis): change path src -> strictyaml-stubs
