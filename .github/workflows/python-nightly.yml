@@ -52,8 +52,9 @@ jobs:
           # Available versions:
           # https://launchpad.net/~deadsnakes/+archive/ubuntu/nightly/+packages
           # https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa
-        - '3.12'
+          # - '3.12' system python version on ubuntu 24.04 noble
         - '3.13'
+        - '3.14'
           # - "3.14-full"
           # https://github.com/actions/setup-python#available-versions-of-pypy
         # - pypy-3.11-nightly librt doesn't support pypy
