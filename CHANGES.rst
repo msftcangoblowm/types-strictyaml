@@ -21,12 +21,17 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
-   - tests: CommaSeparated and Enum
-   - chore(README.rst): add stubtest button
-   - ci: stubtest workflow
-   - fix: strictyaml.scalar.Enum (#3)
-
 .. scriv-start-here
+
+.. _changes_1-7-3-1:
+
+Version 1.7.3.1 — 2026-06-26
+------------------------------
+
+- tests: CommaSeparated and Enum
+- chore(README.rst): add stubtest button
+- ci: stubtest workflow
+- fix: strictyaml.scalar.Enum (#3)
 
 .. _changes_1-7-3-0:
 

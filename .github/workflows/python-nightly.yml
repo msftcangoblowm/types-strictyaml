@@ -45,7 +45,7 @@ jobs:
           # See https://github.com/deadsnakes/nightly for the source of the nightly
           # builds.
           # bionic: 18, focal: 20, jammy: 22, noble: 24
-        - ubuntu-22.04
+        - ubuntu-latest
         python-version:
           # When changing this list, be sure to check the [gh] list in
           # tox.ini so that tox will run properly. PYVERSIONS
