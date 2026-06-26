@@ -1,0 +1,71 @@
+- case: comma_separated_constructor_assumes_str
+  main: |
+    from collections.abc import Sequence
+    from typing import Any, cast
+    import strictyaml as s
+    from typing_extensions import assert_type
+    from strictyaml.ruamel.comments import CommentedMap, CommentedSeq
+    from strictyaml.ruamel import scalarstring
+
+    # verify item_validator takes an instance, not a class
+    item_validator_0 = s.Str
+    s.CommaSeparated(item_validator_0)  # ER: Argument 1 to "CommaSeparated" has incompatible type "type\[Str\]"; expected "ScalarValidator".*
+    schema_0 = s.CommaSeparated(s.Str())
+    schema_0.to_yaml(["1", "2", "3"])
+    yaml_snippet_0 = "1, 2, 3\n"
+    actual_0 = s.load(
+        yaml_snippet_0,
+        schema=schema_0,
+    )
+    assert_type(actual_0._value, "CommentedMap | CommentedSeq | scalarstring.ScalarString | Any")
+    rtype_0 = actual_0.data
+    assert_type(rtype_0, "dict[Any, Any] | list[Any] | str | Any")
+    assert actual_0.is_sequence()
+    rtype_0_1 = cast("list[Any]", rtype_0)
+    assert isinstance(rtype_0, Sequence)  # verify -- actual typing
+    assert rtype_0 == ["1", "2", "3"]  # verify -- runtime value
+
+    yaml_snippet_1 = "1, 2, 3\n"
+    item_validator_1 = s.Int()
+    schema_1 = s.CommaSeparated(item_validator_1)
+    yaml_validated_1 = s.load(yaml_snippet_1, schema_1)
+    rtype_1 = yaml_validated_1.data
+    assert_type(rtype_1, "dict[Any, Any] | list[Any] | str | Any")
+    assert yaml_validated_1.text == yaml_snippet_1
+    assert yaml_validated_1.is_sequence()
+    assert rtype_1 == [1, 2, 3]
+
+    yaml_1 = s.as_document(yaml_validated_1.data, schema_1)
+    assert_type(yaml_1, s.YAML)
+    assert str(yaml_1) == yaml_snippet_1.strip()
+
+- case: comma_separated_int
+  main: |
+    from typing import Any, cast
+    import strictyaml as s
+    from typing_extensions import assert_type
+    from strictyaml.ruamel.comments import CommentedMap, CommentedSeq
+    from strictyaml.ruamel import scalarstring
+
+    yaml_snippet_1 = "1, 2, 3\n"
+    #    instance, not class
+    item_validator_1 = s.Int()
+
+    schema_1 = s.CommaSeparated(item_validator_1)
+    actual_1 = s.load(
+        yaml_snippet_1,
+        schema=schema_1,
+    )
+    assert_type(actual_1._value, "CommentedMap | CommentedSeq | scalarstring.ScalarString | Any")
+    rtype_1 = actual_1.data
+    assert_type(rtype_1, "dict[Any, Any] | list[Any] | str | Any")
+    #    verify -- actual typing
+    assert actual_1.is_sequence()
+    assert isinstance(rtype_1, list)
+    #    verify -- runtime value
+    assert rtype_1 == [1, 2, 3]
+
+    #    after s.load --> yaml str
+    yaml_1 = s.as_document(actual_1.data, schema_1)
+    assert_type(yaml_1, s.YAML)
+    assert str(yaml_1) == yaml_snippet_1.strip()

@@ -35,7 +35,7 @@ class Indents:
     def __len__(self) -> int: ...
 
 class Emitter:
-    DEFAULT_TAG_PREFIXES: ClassVar[str]
+    DEFAULT_TAG_PREFIXES: ClassVar[dict[str, str]]
     MAX_SIMPLE_KEY_LENGTH: ClassVar[int]
 
     def __init__(

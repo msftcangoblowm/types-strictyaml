@@ -1,7 +1,5 @@
-from collections.abc import (
-    Callable,
-    Iterator,
-)
+import builtins
+from collections.abc import Iterator
 from typing import (
     Any,
     ClassVar,
@@ -28,8 +26,17 @@ class DuplicateKeyFutureWarning(MarkedYAMLFutureWarning): ...
 class DuplicateKeyError(MarkedYAMLFutureWarning): ...
 
 class BaseConstructor:
-    yaml_constructors: dict[Any, Any] = ...
-    yaml_multi_constructors: dict[Any, Any] = ...
+    yaml_constructors: ClassVar[dict[Any, Any]] = ...
+    yaml_multi_constructors: ClassVar[dict[Any, Any]] = ...
+    _preserve_quotes: bool | None  # usage assumes Any
+    allow_duplicate_keys: bool | None
+    constructed_objects: dict[Any, Any] = ...
+    deep_construct: bool
+    loader: Any | None
+    recursive_objects: dict[Any, Any] = ...
+    state_generators: list[Any] = ...
+    yaml_base_dict_type: type[builtins.dict[Any, Any]]
+    yaml_base_list_type: type[builtins.list[Any]]
 
     def __init__(
         self,
@@ -76,7 +83,9 @@ class BaseConstructor:
 
 class SafeConstructor(BaseConstructor):
     bool_values: ClassVar[dict[str, bool]]
-    timestamp_regexp: Callable[..., LazyEval]
+    timestamp_regexp: ClassVar[LazyEval]
+    inf_value: ClassVar[float]
+    nan_value: ClassVar[float]
 
     def construct_scalar(self, node: Any) -> Any: ...
     def flatten_mapping(self, node: Any) -> Any: ...

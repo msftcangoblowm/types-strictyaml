@@ -1,5 +1,11 @@
-from typing import Any
+import builtins
+import sys
+from typing import (
+    Any,
+    Final,
+)
 
+from strictyaml.ruamel import scalarstring
 from strictyaml.ruamel.comments import (
     CommentedMap,
     CommentedSeq,
@@ -9,7 +15,22 @@ from strictyaml.validators import Validator
 from strictyaml.yamllocation import YAMLChunk
 from typing_extensions import Self
 
+# from _typeshed import _KT, _VT
+
 __all__ = ("YAML",)
+
+# _K = TypeVar("_K")
+# _V = TypeVar("_V")
+
+unicode: Final[type[builtins.str]]
+
+if sys.version_info >= (3, 7):
+    # On 3.7+, strictyaml sets OrderedDict = dict
+    OrderedDict: Final[type[builtins.dict[Any, Any]]]  # [_KT, _VT]
+else:
+    from collections import OrderedDict as _OrderedDict
+
+    OrderedDict: Final[type[_OrderedDict[Any, Any]]]  # [_KT, _VT]
 
 class YAMLIterator:
     def __init__(self, yaml_object: "YAML") -> None: ...  # noqa: Y020
@@ -18,6 +39,12 @@ class YAMLIterator:
     def __next__(self) -> "YAML": ...  # noqa: Y020
 
 class YAML:
+    _value: CommentedMap | CommentedSeq | scalarstring.ScalarString | Any
+    _text: str | None
+    _chunk: YAMLChunk
+    _validator: Validator | None
+    _selected_validator: Validator | None
+
     def __init__(
         self,
         value: YAMLChunk | Self | Any,
@@ -27,7 +54,7 @@ class YAML:
     def __unicode__(self) -> str: ...
     def revalidate(self, schema: Validator) -> None: ...
     @property
-    def data(self) -> dict[Any, Any] | CommentedSeq | str | Any: ...
+    def data(self) -> dict[Any, Any] | list[Any] | str | Any: ...
     def as_marked_up(self) -> CommentedSeq | CommentedMap: ...
     @property
     def start_line(self) -> int: ...
@@ -66,8 +93,11 @@ class YAML:
     def copy(self) -> Self: ...
     def __gt__(self, val: CommentedMap | CommentedSeq | Validator) -> bool: ...
     def __lt__(self, val: CommentedMap | CommentedSeq | Validator) -> bool: ...
+    # rtype follows YAML.data
     @property
-    def value(self) -> Validator: ...
+    def value(
+        self,
+    ) -> CommentedMap | CommentedSeq | scalarstring.ScalarString | Any: ...
     def is_mapping(self) -> bool: ...
     def is_sequence(self) -> bool: ...
     def is_scalar(self) -> bool: ...

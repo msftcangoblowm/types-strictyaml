@@ -4,25 +4,32 @@ from typing import (
     Final,
 )
 
+from typing_extensions import Self
+
 from .error import StreamMark
 
 SHOWLINES: Final[bool]
 
 class Token:
     __slots__ = ("start_mark", "end_mark", "_comment")
+    _comment: Any | None
+    start_mark: StreamMark
+    end_mark: StreamMark
 
     def __init__(self, start_mark: StreamMark, end_mark: StreamMark) -> None: ...
-    def add_post_comment(self, comment: Any) -> None: ...
-    def add_pre_comments(self, comments: Any) -> None: ...
-    def get_comment(self) -> Any: ...
+    def add_post_comment(self, comment: Any | None) -> None: ...
+    def add_pre_comments(self, comments: Any | None) -> None: ...
+    def get_comment(self) -> Any | None: ...
     @property
     def comment(self) -> Any: ...
-    def move_comment(self, target: Any, empty: bool = False) -> Any: ...
+    def move_comment(self, target: Self, empty: bool = False) -> Self | None: ...
     def split_comment(self) -> Any: ...
 
 class DirectiveToken(Token):
     __slots__ = ("name", "value")
     id: ClassVar[str]
+    name: Any
+    value: Any
 
     def __init__(
         self,
@@ -43,6 +50,7 @@ class DocumentEndToken(Token):
 class StreamStartToken(Token):
     __slots__ = ("encoding",)
     id: ClassVar[str]
+    encoding: Any | None
 
     def __init__(
         self,
@@ -102,6 +110,7 @@ class FlowEntryToken(Token):
 class AliasToken(Token):
     __slots__ = ("value",)
     id: ClassVar[str]
+    value: Any
 
     def __init__(
         self,
@@ -113,6 +122,7 @@ class AliasToken(Token):
 class AnchorToken(Token):
     __slots__ = ("value",)
     id: ClassVar[str]
+    value: Any
 
     def __init__(
         self,
@@ -124,6 +134,7 @@ class AnchorToken(Token):
 class TagToken(Token):
     __slots__ = ("value",)
     id: ClassVar[str]
+    value: Any
 
     def __init__(
         self,
@@ -135,6 +146,9 @@ class TagToken(Token):
 class ScalarToken(Token):
     __slots__ = ("value", "plain", "style")
     id: ClassVar[str]
+    value: Any
+    plain: Any
+    style: Any | None
 
     def __init__(
         self,
@@ -148,6 +162,9 @@ class ScalarToken(Token):
 class CommentToken(Token):
     __slots__ = ("value", "pre_done")
     id: ClassVar[str]
+    value: Any
+    # unused; what is purpose of CommentToken.reset?
+    pre_done: Any
 
     def __init__(
         self,

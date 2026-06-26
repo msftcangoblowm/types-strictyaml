@@ -3,13 +3,18 @@ types-strictyaml
 
 Typing stubs for strictyaml
 
-|  |test-status| |mypy| |pyright|
+|  |test-status| |stubtest| |mypy| |pyright|
 |  |last-commit| |downloads|
 |  |license| |maturity|
 
 .. PYVERSIONS
 
 \* Python 3.10 through 3.14
+
+**new in 1.7.3.1**
+
+verify CommaSeparated and Enum (\#3);
+stubtest workflow and button;
 
 **new in 1.7.3.0**
 
@@ -117,6 +122,8 @@ Quiet and save output to /tmp folder
 Run mypy
 """""""""
 
+``pytest-mypy-plugins`` works only with mypy, not pyright.
+
 .. code:: shell
 
    make premypy
@@ -124,9 +131,11 @@ Run mypy
 Run pyright
 """"""""""""
 
+Against stubs
+
 .. code:: shell
 
-   make preright
+   pyright strictyaml-stubs/
 
 Run pre-commit
 """""""""""""""
@@ -134,6 +143,17 @@ Run pre-commit
 .. code:: shell
 
    make pre-commit
+
+Run stubtest
+"""""""""""""
+
+Without this check, a stubs package could confidently provide incorrect
+type information, leading to false positives or negatives for users.
+
+.. code:: shell
+
+   python -m pip install strictyaml types-strictyaml
+   stubtest  --mypy-config-file=pyproject.toml --allowlist=stubtest_allowlist.txt strictyaml > /tmp/out.txt
 
 licenses
 """""""""
@@ -166,6 +186,9 @@ Creates ``NOTICE.txt``, ``licenses.json`` and ``sbom.json``
     :target: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/testsuite.yml
     :alt: test
 
+.. |stubtest| image:: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/quality-stubtest.yml/badge.svg
+   :target: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/quality-stubtest.yml
+   :alt: stubtest status
 .. |mypy| image:: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/quality-mypy.yml/badge.svg
    :target: https://github.com/msftcangoblowm/types-strictyaml/actions/workflows/quality-mypy.yml
    :alt: mypy status

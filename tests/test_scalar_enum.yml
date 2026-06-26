@@ -1,0 +1,90 @@
+- case: scalar_enum_constructor
+  main: |
+    from typing import Any, cast
+    import strictyaml as s
+    from typing_extensions import assert_type
+
+    # verify item_validator takes an instance, not a class
+    restricted_to_0 = [1]
+    s.Enum(restricted_to_0, item_validator=s.Int)  # ER: Argument "item_validator" to "Enum" has incompatible type "type\[Int\]"; expected "ScalarValidator \| None".*
+
+    # minimal example -- default str
+    #    https://web.archive.org/web/20210120055803/http://intheoreum.org/
+    #    https://web.archive.org/web/*/http://intheoreum.org/
+    yaml_snippet_2 = "Bob\n"
+    restricted_to_2 = ["Bob", "Sally", "Jenny", "Tim"]
+    schema_2 = s.Enum(restricted_to_2)  # item_validator defaults to :code:`s.Str()`
+    actual_2 = s.load(
+        yaml_snippet_2,
+        schema=schema_2,
+    )
+    #    not dict[Any, Any] | CommentedSeq | str
+    rtype_2 = cast("Any", actual_2.data)
+    assert_type(rtype_2, Any)
+    assert isinstance(rtype_2, str)  # verify -- actual typing
+    assert rtype_2 == "Bob"  # verify -- runtime value
+
+    # str instead of an explicit Sequence
+    yaml_snippet_bob = "o\n"
+    s.Enum("Bob")  # ER: Argument 1 to "Enum" has incompatible type "str"; expected "list\[Any\].*"
+
+    # Absurdity of permitting list[str], but not str; which is an array of chr
+    yaml_snippet_bob = "o\n"
+    schema_resurrect_bob = s.Enum(list("Bob"))
+    actual_bob = s.load(
+        yaml_snippet_bob,
+        schema=schema_resurrect_bob,
+    )
+    rtype_bob = cast("Any", actual_bob.data)
+    assert_type(rtype_bob, Any)
+    assert isinstance(rtype_bob, str)  # verify -- actual typing
+    assert rtype_bob == "o"  # verify -- runtime value
+
+- case: scalar_enum_int
+  main: |
+    from typing import Any, cast
+    import strictyaml as s
+    from typing_extensions import assert_type
+
+    # minimal example -- int item
+    yaml_snippet_0 = "1\n"
+    restricted_to_0 = [1]
+    schema_0 = s.Enum(restricted_to_0, item_validator=s.Int())
+    actual_0 = s.load(
+        yaml_snippet_0,
+        schema=schema_0,
+    )
+    #    not dict[Any, Any] | CommentedSeq | str
+    rtype_0 = cast("Any", actual_0.data)
+    assert_type(rtype_0, Any)
+    assert isinstance(rtype_0, int)  # verify -- actual typing
+    assert rtype_0 == 1  # verify -- runtime value
+
+- case: scalar_enum_realistic
+  main: |
+    from typing import Any, cast
+    import strictyaml as s
+    from typing_extensions import assert_type
+
+    # real world example
+    yaml_snippet_1 = "version: 1\n"
+    restricted_to_1 = [1, 2, 3]
+    enum_int_1 = s.Enum(restricted_to_1, item_validator=s.Int())
+    schema_1 = s.MapCombined(
+        {
+            "version": enum_int_1,
+            s.Optional("foo"): s.Str(),
+        },
+        s.Str(),
+        s.Any(),
+    )
+    actual_1 = s.load(
+        yaml_snippet_1,
+        schema=schema_1,
+    )
+    # mypy understands static typed dict, not runtime validated direct access
+    d_actual_1 = cast("dict[Any, Any]", actual_1.data)
+    any_scalar_1 = d_actual_1["version"]
+    assert_type(any_scalar_1, Any)
+    # could use a cast Any --> int
+    assert any_scalar_1 in enum_int_1._restricted_to

@@ -1,4 +1,8 @@
-from typing import Any
+import builtins
+from typing import (
+    Any,
+    Final,
+)
 
 from strictyaml.representation import YAML
 from strictyaml.yamllocation import YAMLChunk
@@ -9,6 +13,8 @@ __all__ = (
     "SeqValidator",
     "Validator",
 )
+
+unicode: Final[type[builtins.str]]
 
 class Validator:
     def __or__(self, other: Any) -> "OrValidator": ...  # noqa: Y020

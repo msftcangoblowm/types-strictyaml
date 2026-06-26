@@ -1,10 +1,16 @@
-from typing import Any
+import builtins
+from typing import (
+    Any,
+    Final,
+)
 
 from strictyaml.representation import YAML
 from strictyaml.yamlpointer import YAMLPointer
 from typing_extensions import Self
 
 __all__ = ("YAMLChunk",)
+
+unicode: Final[type[builtins.str]]
 
 class YAMLChunk:
     def __init__(

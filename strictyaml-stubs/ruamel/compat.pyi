@@ -1,11 +1,6 @@
 from abc import abstractmethod
 from builtins import type as _type
-from collections.abc import (  # noqa
-    Hashable,
-    Mapping,
-    MutableMapping,
-    MutableSequence,
-)
+from collections.abc import MutableSequence
 from typing import (
     Any,
     BinaryIO,
@@ -16,6 +11,8 @@ from typing import (
 from typing_extensions import TypeAlias
 
 _DEFAULT_YAML_VERSION: Final[tuple[int, int]]
+PY2: bool
+PY3: bool
 
 def utf8(s: str) -> str: ...
 def to_str(s: str) -> str: ...

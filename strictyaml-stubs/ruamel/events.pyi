@@ -1,6 +1,8 @@
 from collections.abc import Callable
 from typing import Any
 
+from .anchor import Anchor
+
 __all__ = (
     "AliasEvent",
     "CollectionStartEvent",
@@ -23,20 +25,26 @@ def CommentCheck() -> None: ...
 
 class Event:
     __slots__ = ("start_mark", "end_mark", "comment")
+    start_mark: Any | None
+    end_mark: Any | None
+    comment: Callable[[], None] | None
 
+    # explicit case comment=None not handled
     def __init__(
         self,
         start_mark: Any | None = None,
         end_mark: Any | None = None,
-        comment: Callable[[], None] = ...,
+        comment: Callable[[], None] | None = ...,
     ) -> None: ...
 
 class NodeEvent(Event):
     __slots__ = ("anchor",)
+    anchor: Anchor
 
+    # lacks input validation for Anchor
     def __init__(
         self,
-        anchor: Any,
+        anchor: Anchor,
         start_mark: Any | None = None,
         end_mark: Any | None = None,
         comment: Any | None = None,
@@ -44,6 +52,10 @@ class NodeEvent(Event):
 
 class CollectionStartEvent(NodeEvent):
     __slots__ = ("tag", "implicit", "flow_style", "nr_items")
+    tag: Any
+    implicit: Any
+    flow_style: Any | None
+    nr_items: int | None
 
     def __init__(
         self,
@@ -62,7 +74,9 @@ class CollectionEndEvent(Event):
 
 class StreamStartEvent(Event):
     __slots__ = ("encoding",)
+    encoding: Any | None
 
+    # encoding lacks input validation
     def __init__(
         self,
         start_mark: Any | None = None,
@@ -76,6 +90,9 @@ class StreamEndEvent(Event):
 
 class DocumentStartEvent(Event):
     __slots__ = ("explicit", "version", "tags")
+    explicit: Any | None
+    version: Any | None
+    tags: Any | None
 
     def __init__(
         self,
@@ -89,6 +106,7 @@ class DocumentStartEvent(Event):
 
 class DocumentEndEvent(Event):
     __slots__ = ("explicit",)
+    explicit: Any | None
 
     def __init__(
         self,
@@ -103,6 +121,10 @@ class AliasEvent(NodeEvent):
 
 class ScalarEvent(NodeEvent):
     __slots__ = ("tag", "implicit", "value", "style")
+    tag: Any
+    implicit: Any
+    value: Any
+    style: Any | None
 
     def __init__(
         self: Any,

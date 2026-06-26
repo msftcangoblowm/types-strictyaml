@@ -10,23 +10,128 @@ from typing_extensions import TypeAlias
 from .compat import (
     StreamTextType,
     VersionType,
-    with_metaclass,
 )
+from .composer import Composer as Composer_
+from .constructor import BaseConstructor as BaseConstructor_
+from .constructor import Constructor as Constructor_
+from .constructor import RoundTripConstructor as RoundTripConstructor_
+from .constructor import SafeConstructor as SafeConstructor_
+from .emitter import Emitter as Emitter_
+from .parser import Parser as Parser_
+from .parser import RoundTripParser as RoundTripParser_
+from .reader import Reader as Reader_
+from .representer import BaseRepresenter as BaseRepresenter_
+from .representer import Representer as Representer_
+from .representer import SafeRepresenter as SafeRepresenter_
+from .resolver import VersionedResolver as VersionedResolver_
+from .scanner import RoundTripScanner as RoundTripScanner_
+from .scanner import Scanner as Scanner_
+from .serializer import Serializer as Serializer_
 
-NoneType: TypeAlias = None
+# isort: off
+try:
+    # New name for clibz
+    # pip install ruamel.yaml.clibz
+    from _ruamel_yaml_clibz import (  # type: ignore[import-not-found]
+        CEmitter,  # pyright: ignore[reportUnknownVariableType,reportRedeclaration]
+    )
+    from _ruamel_yaml_clibz import (  # type: ignore[import-not-found, unused-ignore]
+        CParser,  # pyright: ignore[reportUnknownVariableType,reportRedeclaration]
+    )
+except ImportError:
+    try:
+        # Legacy name for clib
+        # pip install ruamel.yaml.clib
+        from _ruamel_yaml import (  # type: ignore[import-not-found]
+            CEmitter,  # pyright: ignore[reportUnknownVariableType,reportRedeclaration]
+        )
+        from _ruamel_yaml import (  # type: ignore[import-not-found, unused-ignore]
+            CParser,  # type: ignore[unused-ignore]  # pyright: ignore[reportUnknownVariableType,reportRedeclaration]  # fmt: skip
+        )
+    except ImportError:
+        # Fallback to pure Python
+        CParser: TypeAlias = None  # type: ignore[no-redef]
+        CEmitter: TypeAlias = None  # type: ignore[no-redef]
+# isort: on
+
 StreamType: TypeAlias = Any
 
-CParser: NoneType = None
-CEmitter: NoneType = None
-
 enforce: Final[Any]
+enc: str | None
+
+# .tokens
+SHOWLINES: bool
+
+__all__ = ("CParser", "CEmitter", "YAML", "YAMLObject")
+
+class YAMLContextManager:
+    def __init__(self, yaml: Any, transform: Any | None = None) -> None: ...
+    def teardown_output(self) -> None: ...
+    def init_output(self, first_data: Any) -> None: ...
+    def dump(self, data: Any) -> None: ...
 
 class YAML:
+    Composer: Composer_ | None
+    Constructor: (
+        Constructor_
+        | BaseConstructor_
+        | SafeConstructor_
+        | RoundTripConstructor_
+        | None
+    )
+    Emitter: Emitter_
+    Parser: Parser_ | RoundTripParser_ | None
+    Reader: Reader_ | None
+    Representer: Representer_ | BaseRepresenter_ | SafeRepresenter_ | None
+    # get_serializer_representer_emitter uses BaseResolver and Resolver
+    Resolver: VersionedResolver_
+    Scanner: Scanner_ | RoundTripScanner_ | None
+    Serializer: Serializer_ | None
+    # unlikely to be set to a different contextmanager
+    _context_manager: YAMLContextManager | None
+    _output: Path | Any | None
+    allow_unicode: bool | None
+    default_flow_style: bool | None
+    plug_ins: list[Any]
+    # unused
+    pure: bool | None
+    typ: list[Any] | Any
+
+    # #####
+    # Did not confirm the rest
+    # #####
+    stream: Any | None
+    canonical: Any | None
+    old_indent: Any | None
+    width: Any | None
+    line_break: Any | None
+    map_indent: Any | None
+    sequence_indent: Any | None
+    sequence_dash_offset: Any | int
+    compact_seq_seq: Any | None
+    compact_seq_map: Any | None
+    sort_base_mapping_type_on_output: Any | None  # default: sort
+    top_level_colon_align: Any | None
+    prefix_colon: Any | None
+    version: Any | None
+    preserve_quotes: Any | None
+    allow_duplicate_keys: bool = False  # duplicate keys in map, set
+    encoding: str | None
+    explicit_start: Any | None
+    explicit_end: Any | None
+    tags: Any | None
+    default_style: Any | None
+    top_level_block_style_scalar_no_indent_error_1_1: bool
+    # directives end indicator with single scalar document
+    scalar_after_indicator: Any | None
+    # [a, b: 1, c: {d: 2}]  vs. [a, {b: 1}, {c: {d: 2}}]
+    brace_single_entry_mapping_in_flow_sequence: bool = False
+
     def __init__(
         self,
         _kw: Any = ...,
         typ: str | None = None,
-        pure: Any | None = None,
+        pure: bool | None = False,  # lacks input validation
         output: Any | None = None,
         plug_ins: Any | None = None,
     ) -> None: ...
@@ -68,7 +173,7 @@ class YAML:
     def Xdump_all(
         self,
         documents: Any,
-        stream: Path | StreamType = None,
+        stream: Path | Any,
         _kw: Any | None = ...,
         transform: Any | None = None,
     ) -> Any: ...
@@ -102,12 +207,6 @@ class YAML:
         seq_seq: Any | None = None,
         seq_map: Any | None = None,
     ) -> None: ...
-
-class YAMLContextManager:
-    def __init__(self, yaml: Any, transform: Any | None = None) -> None: ...
-    def teardown_output(self) -> None: ...
-    def init_output(self, first_data: Any) -> None: ...
-    def dump(self, data: Any) -> None: ...
 
 def yaml_object(yml: Any) -> Any: ...
 def scan(stream: StreamTextType, Loader: Any = ...) -> Any: ...
@@ -283,7 +382,7 @@ def add_multi_representer(
 class YAMLObjectMetaclass(type):
     def __init__(cls, name: Any, bases: Any, kwds: Any) -> None: ...
 
-class YAMLObject(with_metaclass(YAMLObjectMetaclass)):  # type: ignore
+class YAMLObject(metaclass=YAMLObjectMetaclass):
     __slots__ = ()
 
     yaml_constructor: Any = ...

@@ -1,6 +1,7 @@
 import sys
 from collections import OrderedDict
 from collections.abc import (
+    Callable,
     ItemsView,
     Iterator,
     KeysView,
@@ -13,10 +14,14 @@ from typing import (
     Any,
     ClassVar,
     Final,
+    TypeVar,
 )
 
 from strictyaml.ruamel.compat import MutableSliceableSequence
-from typing_extensions import Self
+from typing_extensions import (
+    Self,
+    disjoint_base,
+)
 
 __all__ = (
     "CommentedSeq",
@@ -34,6 +39,8 @@ line_col_attrib: Final[str]
 merge_attrib: Final[str]
 tag_attrib: Final[str]
 
+_T = TypeVar("_T", bound="CommentedKeyMap")  # noqa: Y020
+
 class ordereddict(OrderedDict):  # type: ignore
     def insert(self, pos: int, key: Any, value: Any) -> None: ...
 
@@ -45,6 +52,9 @@ class Comment:
         "_start",
     )
     attrib: ClassVar[str]
+    comment: list[list[Any] | None] | None
+    _items: dict[Any, Any]
+    _end: list[Any]
 
     def __init__(self) -> None: ...
     @property
@@ -83,6 +93,7 @@ class LineCol:
 class Tag:
     __slots__ = ("value",)
     attrib: ClassVar[str]
+    value: Any | None
 
     def __init__(self) -> None: ...
 
@@ -174,7 +185,8 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
         reverse: bool | None = False,
     ) -> None: ...
 
-class CommentedKeySeq(tuple, CommentedBase):  # type: ignore
+@disjoint_base
+class CommentedKeySeq(tuple[Any], CommentedBase):
     def _yaml_add_comment(self, comment: Any, key: Any | None = ...) -> None: ...
     def _yaml_add_eol_comment(self, comment: Any, key: Any) -> None: ...
     def _yaml_get_columnX(self, key: Any) -> Any: ...
@@ -265,13 +277,26 @@ def raise_immutable(cls: Any, *args: Any, **kwargs: Any) -> None: ...
 
 class CommentedKeyMap(CommentedBase, Mapping):  # type: ignore
     __slots__ = (Comment.attrib, "_od")
+
+    # Explicitly declare the classmethod in the stub
+    @classmethod
+    def raise_immutable(cls: type[_T], *args: Any, **kwargs: Any) -> None: ...
+
+    __delitem__: Callable[[Any], None]
+    __setitem__: Callable[[Any], None]
+    clear: Callable[[Any], None]
+    pop: Callable[[Any], None]
+    popitem: Callable[[Any], None]
+    setdefault: Callable[[Any], None]
+    update: Callable[[Any], None]
+
     def __init__(self, *args: Any, **kw: Any) -> None: ...
     def __getitem__(self, index: Any) -> Any: ...
     def __iter__(self) -> Iterator[Any]: ...
     def __len__(self) -> int: ...
     def __hash__(self) -> int: ...
     @classmethod
-    def fromkeys(cls, keys: Any, v: Any | None = None) -> Any: ...
+    def fromkeys(cls, keys: object, v: object | None = None) -> Self: ...
     def _yaml_add_comment(self, comment: Any, key: Any | None = ...) -> None: ...
     def _yaml_add_eol_comment(self, comment: Any, key: Any) -> None: ...
     def _yaml_get_columnX(self, key: Any) -> Any: ...
@@ -283,6 +308,8 @@ class CommentedOrderedMap(CommentedMap):
 
 class CommentedSet(MutableSet, CommentedBase):  # type: ignore  # noqa
     __slots__ = (Comment.attrib, "odict")
+    odict: OrderedDict[Any, Any]
+
     def __init__(self, values: Any | None = None) -> None: ...
     def _yaml_add_comment(
         self,

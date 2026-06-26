@@ -34,6 +34,12 @@ class YAMLSerializationError(StrictYAMLError): ...
 class InvalidOptionalDefault(YAMLSerializationError): ...
 
 class YAMLValidationError(StrictYAMLError):
+    context: Any
+    problem: Any | None
+    _chunk: YAMLChunk | None
+    # This is a guess
+    note: str | None
+
     def __init__(
         self,
         context: Any,

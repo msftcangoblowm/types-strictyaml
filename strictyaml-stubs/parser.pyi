@@ -1,4 +1,7 @@
-from typing import Any
+from typing import (
+    Any,
+    ClassVar,
+)
 
 from strictyaml.representation import YAML
 from strictyaml.ruamel.compat import VersionType
@@ -20,7 +23,7 @@ __all__ = (
 )
 
 class StrictYAMLConstructor(RoundTripConstructor):
-    yaml_constructors: dict[Any, Any] = {}
+    yaml_constructors: ClassVar[dict[Any, Any]] = ...
 
     def construct_mapping(  # type: ignore[override]
         self,

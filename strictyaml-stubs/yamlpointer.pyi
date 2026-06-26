@@ -1,4 +1,8 @@
-from typing import Any
+import builtins
+from typing import (
+    Any,
+    Final,
+)
 
 from strictyaml.ruamel.comments import (
     CommentedMap,
@@ -11,6 +15,8 @@ from typing_extensions import (
 )
 
 __all__ = ("YAMLPointer",)
+
+unicode: Final[type[builtins.str]]
 
 SEGMENT: TypeAlias = CommentedMap | CommentedSeq
 

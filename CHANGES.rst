@@ -8,6 +8,9 @@ Changelog
    Feature request
    .................
 
+   - [ci] add to README.rst and gh workflow
+     https://github.com/all-contributors/allcontributors.org
+
    Known regressions
    ..................
 
@@ -17,6 +20,11 @@ Changelog
 
    Commit items for NEXT VERSION
    ..............................
+
+   - tests: CommaSeparated and Enum
+   - chore(README.rst): add stubtest button
+   - ci: stubtest workflow
+   - fix: strictyaml.scalar.Enum (#3)
 
 .. scriv-start-here
 

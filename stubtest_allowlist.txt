@@ -1,0 +1,66 @@
+# C lib import failure in strictyaml.ruamel.cyaml.
+#    Optional so note doesn't lead to non-zero exit code
+(strictyaml\.ruamel\.cyaml)?
+
+# Added by types-strictyaml -- recommended addition
+strictyaml.__all__
+strictyaml.any_validator.__all__
+strictyaml.compound.__all__
+strictyaml.constants.__all__
+strictyaml.dumper.__all__
+strictyaml.exceptions.__all__
+strictyaml.parser.__all__
+strictyaml.representation.__all__
+strictyaml.scalar.__all__
+strictyaml.utils.__all__
+strictyaml.validators.__all__
+strictyaml.yamllocation.__all__
+strictyaml.yamlpointer.__all__
+strictyaml.ruamel.__all__
+strictyaml.ruamel.anchor.__all__
+strictyaml.ruamel.comments.__all__
+strictyaml.ruamel.comments.raise_immutable
+strictyaml.ruamel.comments.CommentedKeyMap.raise_immutable
+strictyaml.ruamel.comments.CommentedKeyMap.fromkeys
+strictyaml.ruamel.comments.CommentedSeq.sort
+strictyaml.ruamel.configobjwalker.__all__
+strictyaml.ruamel.constructor.__all__
+strictyaml.ruamel.error.StringMark.__slots__
+strictyaml.ruamel.events.__all__
+strictyaml.ruamel.main.__all__
+strictyaml.ruamel.nodes.__all__
+strictyaml.ruamel.parser.__all__
+strictyaml.ruamel.reader.__all__
+strictyaml.ruamel.scalarbool.__all__
+strictyaml.ruamel.scalarfloat.__all__
+strictyaml.ruamel.scalarstring.LiteralScalarString.__slots__
+strictyaml.ruamel.scalarstring.ScalarString.__slots__
+strictyaml.ruamel.scanner.__all__
+strictyaml.ruamel.serializer.__all__
+strictyaml.ruamel.timestamp.__all__
+strictyaml.ruamel.util.__all__
+
+# Added by types-strictyaml -- TypeAlias
+strictyaml.any_validator.FromDocument
+strictyaml.any_validator.FromData
+strictyaml.compound.MapValidatorType
+strictyaml.yamlpointer.SEGMENT
+strictyaml.ruamel.dumper.StreamType
+strictyaml.ruamel.emitter.StreamType
+strictyaml.ruamel.main.StreamType
+strictyaml.ruamel.resolver.RegExpType
+strictyaml.ruamel.util.PatternStr
+strictyaml.ruamel.util.RegExpType
+
+# Added by types-strictyaml -- kwarg default
+strictyaml.exceptions.YAMLValidationError.__init__
+
+# compat --> deprecated
+strictyaml.ruamel.compat.BytesIO
+strictyaml.ruamel.compat.ObjectCounter
+strictyaml.ruamel.compat.StreamTextType
+strictyaml.ruamel.compat.StreamType
+strictyaml.ruamel.compat.StringIO
+strictyaml.ruamel.compat.VersionType
+strictyaml.ruamel.compat.object_counter
+strictyaml.ruamel.compat.unichr

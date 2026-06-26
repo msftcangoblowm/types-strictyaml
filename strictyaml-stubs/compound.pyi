@@ -1,4 +1,8 @@
-from typing import Any
+import builtins
+from typing import (
+    Any,
+    Final,
+)
 
 from strictyaml.ruamel.comments import (
     CommentedMap,
@@ -22,6 +26,8 @@ __all__ = (
     "FixedSeq",
     "UniqueSeq",
 )
+
+unicode: Final[type[builtins.str]]
 
 class Optional:
     __slots__ = ("key", "default", "drop_if_none")

@@ -23,8 +23,8 @@ StreamType: TypeAlias = Any
 class BaseDumper(Emitter, Serializer, BaseRepresenter, BaseResolver):
     def __init__(
         self,
-        stream: Any,
-        default_style: StreamType | None = None,
+        stream: StreamType,
+        default_style: Any | None = None,
         default_flow_style: Any | None = None,
         canonical: Any | None = None,
         indent: bool | None = None,

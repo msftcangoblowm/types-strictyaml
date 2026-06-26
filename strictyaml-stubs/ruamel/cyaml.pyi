@@ -12,8 +12,10 @@ from .constructor import (
     SafeConstructor,
 )
 from .main import (
-    CEmitter,
-    CParser,
+    CEmitter,  # pyright: ignore[reportAttributeAccessIssue, reportUnknownVariableType]
+)
+from .main import (
+    CParser,  # pyright: ignore[reportAttributeAccessIssue, reportUnknownVariableType]
 )
 from .representer import (
     BaseRepresenter,

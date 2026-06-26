@@ -1,6 +1,10 @@
+import builtins
 import decimal
 from datetime import datetime
-from typing import Any
+from typing import (
+    Any,
+    Final,
+)
 
 from strictyaml.representation import YAML
 from strictyaml.validators import Validator
@@ -26,6 +30,8 @@ __all__ = (
     "Url",
 )
 
+unicode: Final[type[builtins.str]]
+
 class ScalarValidator(Validator):
     @property
     def rule_description(self) -> str: ...
@@ -35,18 +41,21 @@ class ScalarValidator(Validator):
     def validate_scalar(self, chunk: YAMLChunk) -> Any: ...
 
 class Enum(ScalarValidator):
+    _item_validator: ScalarValidator
+    _restricted_to: list[Any]
+
     def __init__(
         self,
-        restricted_to: list[str],
-        item_validator: type[ScalarValidator] | None = None,
+        restricted_to: list[Any],
+        item_validator: ScalarValidator | None = None,
     ) -> None: ...
-    def validate_scalar(self, chunk: YAMLChunk) -> type[ScalarValidator]: ...
+    def validate_scalar(self, chunk: YAMLChunk) -> Any: ...
     def to_yaml(self, data: Any) -> YAML: ...
 
 class CommaSeparated(ScalarValidator):
-    def __init__(self, item_validator: type[ScalarValidator]) -> None: ...
+    def __init__(self, item_validator: ScalarValidator) -> None: ...
     def validate_scalar(self, chunk: YAMLChunk) -> list[Any]: ...
-    def to_yaml(self, data: str | list[str]) -> YAML: ...
+    def to_yaml(self, data: str | list[Any]) -> YAML: ...
 
 class Regex(ScalarValidator):
     def __init__(self, regular_expression: str) -> None: ...
