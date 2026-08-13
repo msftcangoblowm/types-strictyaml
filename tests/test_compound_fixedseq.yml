@@ -1,0 +1,53 @@
+- case: compound_fixedseq_exceptions
+  expect_fail: yes
+  regex: yes
+  main: |
+    import textwrap
+    import strictyaml as s
+    from strictyaml.exceptions import YAMLValidationError
+    from strictyaml.representation import YAML
+    from strictyaml.validators import Validator
+
+    validators_0: list[Validator] = [s.Int(), s.Map({"x": s.Str()}), s.Float()]
+    schema_0 = s.FixedSeq(validators_0)
+    str_yaml_0: str = textwrap.dedent("""
+    - 1
+    - a
+    """)
+    s.load(str_yaml_0, schema_0)  # ER: .*YAMLValidationError.*when expecting a sequence of 3 elements[\s\S]*found a sequence of 2 elements[\s\S]*
+
+- case: compound_fixedseq_constructor
+  main: |
+    import textwrap
+    from collections.abc import Sequence
+    from typing import Any, cast
+    import strictyaml as s
+    from strictyaml.representation import YAML
+    from strictyaml.ruamel.comments import CommentedSeq
+    from strictyaml.validators import Validator
+    from typing_extensions import assert_type
+
+    # length is runtime evaluated
+    validators_0: list[Validator] = [s.Int(), s.Map({"x": s.Str()}), s.Float()]
+    schema_0 = s.FixedSeq(validators_0)
+    # repr(schema)
+    assert_type(repr(schema_0), str)
+
+    # schema._validators
+    assert_type(schema_0._validators, list[Validator])
+
+    # schema.to_yaml
+    assert_type(schema_0.to_yaml(["1", {"x": 5}, "2.5"]), CommentedSeq)
+
+    str_yaml_0: str = textwrap.dedent("""
+    - 1
+    - x: 5
+    - 2.5
+    """)
+
+    result: YAML = s.load(str_yaml_0, schema_0)
+    t_result: tuple[int, dict[str, str], float] = cast("tuple[int, dict[str, str], float]", result.data)
+    assert_type(t_result[0], int)
+    assert_type(t_result[1], dict[str, str])
+    assert_type(t_result[2], float)
+    assert len(t_result) == 3

@@ -1,0 +1,143 @@
+- case: compound_map_basics
+  main: |
+    import strictyaml as s
+    from strictyaml.scalar import ScalarValidator
+    from strictyaml.validators import Validator
+    from typing_extensions import assert_type
+
+    # validator_key property
+    schema_0 = s.Map({"a": s.Int(), "b": s.Int()})
+    validator_key = schema_0.key_validator
+    #   No custom ScalarValidator used in the above schema. Therefore
+    #   StringKeyValidator is more narrow and accurate than ScalarValidator;
+    #   excludes non-string-like ScalarValidator.
+    #
+    #   Unfortunitely cannot import StringKeyValidator from a stubs package.
+    assert_type(validator_key, ScalarValidator)
+    assert validator_key == s.Str()
+
+    # get_validator
+    validator_a = schema_0.get_validator("a")
+    assert_type(validator_a, Validator)
+    assert validator_a == s.Int()
+
+    # repr(schema)
+    assert_type(repr(schema_0), str)
+
+- case: compound_map_exception
+  expect_fail: yes
+  regex: yes
+  main: |
+    import textwrap
+    import strictyaml as s
+    from strictyaml.expectations import YAMLValidationError
+
+    # key_validator --> AssertionError (not a ScalarValidator)
+    s.Map({"a: 1, c: 2"}, key_validator=s.Map({"c": s.Float()}))  # ER: .*AssertionError.*key validator must be ScalarValidator
+
+    # prepare
+    schema_1 = s.Map({"a": s.Int(), "b": s.Int()}, key_validator=s.Str())
+
+    # act -- unexpected key
+    s.load("a: 1, c: 2", schema_1)  # ER: .*YAMLValidationError.*unexpected key not in schema 'c'
+
+    # act -- expect_mapping, not a sequence. len matches.
+    str_yaml_1 = textwrap.dedent("""
+    - 1
+    - 2
+    """)
+    s.load(str_yaml_1, schema_1)  # ER: .*YAMLValidationError.*Expected a dict, found '[\s\S]*'
+
+    # act -- unexpected type
+    s.load("a: 1.2, b: 2.3", schema_1)  # ER: .*YAMLValidationError.*when expecting a '[\s\S]*'.*
+
+    # act -- empty dict (flow style)
+    s.dirty_load("{}", schema_1, allow_flow_style=True)  # ER: .*YAMLSerializationError.*Expected a non-empty dict, found an empty dict\.[\s\S]*Use EmptyDict validator to serialize empty dicts\.
+
+    schema_2 = s.Map({"a": s.Int(), "b": s.Int()})
+    s.load("a: 1", schema_2)  # ER: .*YAMLValidationError.*required key\(s\) 'b' not found.*
+
+- case: compound_map_optional
+  main: |
+    import textwrap
+    from typing import cast
+    import strictyaml as s
+    from strictyaml.representation import YAML
+    from typing_extensions import assert_type
+
+    # Optional non-None default
+    schema_0 = s.Map(
+        {
+            "a": s.Int(),
+            s.Optional("b", default=1.0, drop_if_none=True): s.EmptyNone() | s.Float(),
+        }
+    )
+    str_yaml_0 = textwrap.dedent("""
+    a: 5
+    """)
+    result: YAML = s.load(str_yaml_0, schema_0)
+    d_result = cast("dict[str, float | None]", result.data)
+    assert_type(d_result["a"], "float | None")
+    assert_type(d_result["b"], "float | None")
+    #    No key "b" so gets default
+    assert d_result["b"] == 1.0
+
+- case: compound_map_optional_exception
+  expect_fail: yes
+  regex: yes
+  main: |
+    import strictyaml as s
+    from strictyaml.exceptions import InvalidOptionalDefault
+
+    s.Map(  # ER: .*InvalidOptionalDefault.*If you have a default that isn't None, drop_if_none must be True\.
+        {
+            "a": s.Int(),
+            s.Optional("b", default=1.0, drop_if_none=False): s.EmptyNone() | s.Float(),
+        }
+    )
+
+    s.Map(  # ER: .*InvalidOptionalDefault.*Optional default for 'b' failed validation:[\s\S]*
+        {
+            "a": s.Int(),
+            s.Optional("b", default=3.0, drop_if_none=True): s.EmptyNone() | s.Bool(),
+        },
+    )
+
+- case: compound_map_to_yaml
+  main: |
+    import textwrap
+    import strictyaml as s
+    from strictyaml.representation import YAML
+    from strictyaml.ruamel.comments import CommentedMap
+    from typing_extensions import assert_type
+
+    # prepare -- key_validator defaults to s.Str()
+    schema_0 = s.Map({"a": s.Int(), "b": s.Int()})
+    d_yaml_0 = {"a": 1, "b": 2}
+
+    # act -- dict --> CommentedMap
+    cm_0 = schema_0.to_yaml(d_yaml_0)
+    assert_type(cm_0, CommentedMap)
+
+    # normal workflow -- Python object --> YAML
+    yaml_0 = s.as_document(d_yaml_0, schema=schema_0)
+    assert_type(yaml_0, YAML)
+    str_yaml_0 = yaml_0.as_yaml()
+    assert_type(str_yaml_0, str)
+    d_yaml_actual = yaml_0.data
+    assert d_yaml_actual == d_yaml_0
+
+- case: compound_map_to_yaml_exception
+  expect_fail: yes
+  regex: yes
+  main: |
+    import strictyaml as s
+    from strictyaml.expectations import YAMLSerializationError
+
+    # prepare
+    schema_0 = s.Map({"a": s.Int(), "b": s.Int()})
+
+    # Expecting dict got something else
+    schema_0.to_yaml([])  # ER .*YAMLSerializationError.*Expected a dict, found '[\s\S]*'
+    # empty dict
+    schema_0.to_yaml({})  # ER .*YAMLSerializationError.*Expected a non-empty dict, found an empty dict\.[\s\S]*Use EmptyDict validator to serialize empty dicts\.

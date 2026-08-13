@@ -12,6 +12,8 @@ from .error import (
 )
 from .util import LazyEval
 
+from .._types import StreamType  # isort: skip
+
 __all__ = ("ReaderError", "Reader")
 
 class ReaderError(YAMLError):
@@ -45,10 +47,10 @@ class Reader:
     pointer: int
     raw_buffer: Any | None
     raw_decode: Callable[[bytes, str, bool], tuple[str, int]] | None
-    _stream: Any | None
+    _stream: StreamType | None
     stream_pointer: int
 
-    def __init__(self, stream: Any, loader: Any | None = None) -> None: ...
+    def __init__(self, stream: StreamType, loader: Any | None = None) -> None: ...
     def reset_reader(self) -> None: ...
     @property
     def stream(self) -> Any: ...

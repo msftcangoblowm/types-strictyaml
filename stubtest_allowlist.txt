@@ -40,14 +40,13 @@ strictyaml.ruamel.serializer.__all__
 strictyaml.ruamel.timestamp.__all__
 strictyaml.ruamel.util.__all__
 
+# Stub-only module
+strictyaml._types
+
 # Added by types-strictyaml -- TypeAlias
 strictyaml.any_validator.FromDocument
 strictyaml.any_validator.FromData
 strictyaml.compound.MapValidatorType
-strictyaml.yamlpointer.SEGMENT
-strictyaml.ruamel.dumper.StreamType
-strictyaml.ruamel.emitter.StreamType
-strictyaml.ruamel.main.StreamType
 strictyaml.ruamel.resolver.RegExpType
 strictyaml.ruamel.util.PatternStr
 strictyaml.ruamel.util.RegExpType

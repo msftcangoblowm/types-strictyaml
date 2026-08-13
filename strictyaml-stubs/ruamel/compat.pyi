@@ -30,7 +30,9 @@ BytesIO: BinaryIO
 
 no_limit_int: TypeAlias = int  # noqa: Y042
 
+# Deprecated: Instead use types-strictyaml._types.StreamType
 StreamType: TypeAlias = Any
+# Deprecated: Instead use types-strictyaml._types.ReadableFile[str] | types-strictyaml._types.ReadableFile[bytes]
 StreamTextType: TypeAlias = TextIO | Any
 VersionType: TypeAlias = list[int] | str | tuple[int, int]
 

@@ -8,14 +8,29 @@ from strictyaml.representation import YAML
 from strictyaml.yamlpointer import YAMLPointer
 from typing_extensions import Self
 
+from ._types import SEGMENT, YAMLChunkContents  # isort: skip
+
 __all__ = ("YAMLChunk",)
 
 unicode: Final[type[builtins.str]]
 
 class YAMLChunk:
+    _ruamelparsed: YAMLChunkContents
+    # Before validation (YAMLChunk.[process&fork]) strictparsed | _ruamelparsed
+    # After validation ``YAML | SEGMENT``
+    # **Initially** must be able to hold **both** (YAMLChunk.__init__:34)
+    # strictyaml.representation.YAML.__setitem__ line:247 3rd arg is self
+    # YAML | SEGMENT | YAMLChunkContents simplified to YAML | YAMLChunkContents
+    # cuz CommentedBase includes SEGMENT
+    _strictparsed: YAML | YAMLChunkContents
+    _pointer: YAMLPointer
+    _label: str | None
+    # Associates strictparsed key names with ruamelparsed key names
+    _key_association: dict[str, str]
+
     def __init__(
         self,
-        ruamelparsed: Any,
+        ruamelparsed: YAMLChunkContents,
         pointer: YAMLPointer | None = None,
         label: str | None = None,
         strictparsed: YAML | None = None,
@@ -58,5 +73,6 @@ class YAMLChunk:
     def lines_before(self, how_many: int) -> list[str]: ...
     def lines_after(self, how_many: int) -> list[str]: ...
     @property
-    def contents(self) -> Any: ...
-    def strictparsed(self) -> Self: ...
+    def contents(self) -> YAMLChunkContents: ...
+    # Assume after validation (process/fork). Therefore source code missing a typing.cast
+    def strictparsed(self) -> YAML | SEGMENT: ...

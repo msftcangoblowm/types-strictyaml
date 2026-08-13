@@ -63,9 +63,18 @@ from strictyaml.validators import (
     Validator,
 )
 
+from ._types import (
+    PathLikeStream,
+    ReadableFile,
+    StreamType,
+)
+
 __version__: Final[str]
 
 __all__ = (
+    "PathLikeStream",
+    "ReadableFile",
+    "StreamType",
     "load",
     "dirty_load",
     "as_document",

@@ -1,0 +1,10 @@
+{
+  "include": [".venv/lib/python3.10/site-packages/strictyaml"],
+  "exclude": [],
+  "typeCheckingMode": "strict",
+  "reportUnknownVariableType": "warning",
+  "reportUnknownMemberType": "warning",
+  "reportUnknownParameterType": "warning",
+  "reportUnknownArgumentType": "warning",
+  "reportUnknownLambdaType": "warning"
+}

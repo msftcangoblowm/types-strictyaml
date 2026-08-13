@@ -4,21 +4,14 @@ from typing import (
     Final,
 )
 
-from strictyaml.ruamel.comments import (
-    CommentedMap,
-    CommentedSeq,
-)
 from strictyaml.yamllocation import YAMLChunk
-from typing_extensions import (
-    Self,
-    TypeAlias,
-)
+from typing_extensions import Self
+
+from ._types import SEGMENT  # isort: skip
 
 __all__ = ("YAMLPointer",)
 
 unicode: Final[type[builtins.str]]
-
-SEGMENT: TypeAlias = CommentedMap | CommentedSeq
 
 # _indices Any portion needs a TypeAlias
 class YAMLPointer:

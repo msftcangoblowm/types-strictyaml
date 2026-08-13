@@ -1,6 +1,7 @@
 # package
-recursive-include tests *.yml
 recursive-include requirements *.in *.unlock *.lock
+# recursive-include tests *.yml
+prune tests
 
 # mypy
 prune .mypy_cache
@@ -15,6 +16,7 @@ graft .git
 
 prune build
 prune dist
+prune *.egg-info
 
 global-include *.pyi
 global-include py.typed

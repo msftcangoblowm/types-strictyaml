@@ -21,6 +21,13 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   feat: stream typing
+   feat: narrow typing YAMLChunk._strictparsed YAMLChunk._ruamelparsed
+   refactor(compound): slots and attributes
+   docs: commentary on typing of complicated YAMLChunk._strictparsed
+   tests: document strictyaml#65
+   tests: FixedSeq Map MapPattern MapCombined
+
 .. scriv-start-here
 
 .. _changes_1-7-3-1:

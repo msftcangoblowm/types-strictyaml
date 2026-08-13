@@ -1,0 +1,86 @@
+- case: compound_mappattern_constructor
+  expect_fail: yes
+  regex: yes
+  main: |
+    import textwrap
+    from typing import Any, cast
+    import strictyaml as s
+    from strictyaml.representation import YAML
+    from typing_extensions import assert_type
+
+    key_validator = s.Str()
+    value_validator = s.Any()
+    schema_0 = s.MapCombined(
+        {
+            "required": s.Str(),
+            s.Optional("foo"): s.Int(),
+        },
+        key_validator,
+        value_validator,
+    )
+    str_yaml_0 = textwrap.dedunt("""
+    required: Hello World
+    foo: 42
+    bar: 42
+    """)
+    result_0: YAML = s.load(str_yaml_0, schema=schema_0)
+    d_result_0 = cast("dict[str, str | int | Any]", result_0.data)
+    d_expected_0 = {
+        "required": "Hello World",
+        "foo": 42,
+        "bar": "42",
+    }
+    assert d_result_0 == d_expected_0
+
+    # Optional is absent
+    str_yaml_1 = textwrap.dedunt("""
+    required: Hello World
+    bar: 42
+    """)
+    result_1: YAML = s.load(str_yaml_1, schema=schema_0)
+    d_result_1 = cast("dict[str, str | int | Any]", result_1.data)
+    d_expected_1 = {
+        "required": "Hello World",
+        "bar": "42",
+    }
+    assert d_result_1 == d_expected_1
+
+    # Multiple undefined
+    str_yaml_2 = textwrap.dedunt("""
+        required: Hello World
+        bar: 42
+        baz: forty two
+    """)
+    result_2: YAML = s.load(str_yaml_2, schema=schema_0)
+    d_result_2 = cast("dict[str, str | int | Any]", result_2.data)
+    d_expected_2 = {
+        "required": "Hello World",
+        "bar": "42",
+        "baz": "forty two",
+    }
+    assert d_result_2 == d_expected_2
+
+    # Required is absent
+    str_yaml_3 = textwrap.dedunt("""
+        bar: 42
+    """)
+    s.load(str_yaml_3, schema=schema_0)  # ER: .*YAMLValidationError.*while parsing a mapping[\s\S]*required key(s) 'required' not found.*
+
+    # Undefined of invalid type
+    str_yaml_4 = textwrap.dedunt("""
+    required: Hello World
+    bar: forty two
+    """)
+    s.load(str_yaml_4, schema=schema_0)  # ER: .*YAMLValidationError.*when expecting an integer[\s\S]*found arbitrary text.*
+
+    # Invalid key type
+    schema_1 = s.MapCombined(
+        {},
+        s.Int(),
+        s.Any(),
+    )
+    str_yaml_5 = textwrap.dedunt("""
+        1: Hello World
+        not_an_integer: 42
+    """)
+    s.load(str_yaml_5, schema=schema_1)  # ER: .*YAMLValidationError.*when expecting an integer[\s\S]*found arbitrary text[\s\S]*

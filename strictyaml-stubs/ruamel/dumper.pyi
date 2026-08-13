@@ -1,7 +1,5 @@
 from typing import Any
 
-from typing_extensions import TypeAlias
-
 from .emitter import Emitter
 from .representer import (
     BaseRepresenter,
@@ -16,9 +14,9 @@ from .resolver import (
 )
 from .serializer import Serializer
 
-__all__ = ["BaseDumper", "SafeDumper", "Dumper", "RoundTripDumper"]
+from .._types import StreamType  # isort: skip
 
-StreamType: TypeAlias = Any
+__all__ = ["BaseDumper", "SafeDumper", "Dumper", "RoundTripDumper"]
 
 class BaseDumper(Emitter, Serializer, BaseRepresenter, BaseResolver):
     def __init__(

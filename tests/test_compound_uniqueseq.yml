@@ -1,0 +1,90 @@
+- case: compound_uniqueseq_duplicate_error
+  expect_fail: yes
+  regex: yes
+  main: |
+    import strictyaml as s
+
+    schema = s.UniqueSeq(s.Str())
+    s.load("- a\n- a\n", schema)  # ER: .*duplicate found.*
+
+- case: compound_uniqueseq_expecting_scalarvalidator
+  expect_fail: yes
+  regex: yes
+  main: |
+    import strictyaml as s
+
+    schema = s.UniqueSeq(s.Map({"x": s.Str()}))  # ER: .*UniqueSeq validator must be ScalarValidator.*
+
+- case: compound_uniqueseq_expecting_sequence
+  expect_fail: yes
+  regex: yes
+  main: |
+    import strictyaml as s
+
+    schema = s.UniqueSeq(s.Float())
+    # Expecting only float, found int
+    str_yaml_0 = "- 1\n- 1.2\n"
+    s.load(str_yaml_0, schema)  # ER: .*when expecting a unique sequence.*
+
+    # Mapping, not a Sequence
+    str_yaml_1 = "x: 1\ny: 1.2\n"
+    s.load(str_yaml_0, schema)  # ER: .*when expecting a unique sequence.*
+
+- case: compound_uniqueseq_constructor
+  main: |
+    import strictyaml as s
+    from strictyaml.ruamel.comments import CommentedSeq
+    from typing_extensions import assert_type
+
+    schema = s.UniqueSeq(s.Float())
+
+    # repr(schema)
+    assert_type(repr(schema), str)
+
+    # schema.to_yaml
+    assert_type(schema.to_yaml([1.0, 1.2]), CommentedSeq)
+
+- case: compound_uniqueseq_to_yaml_dups
+  expect_fail: yes
+  regex: yes
+  main: |
+    from typing_extensions import assert_type
+    import strictyaml as s
+    from strictyaml.exceptions import YAMLSerializationError
+
+    schema = s.UniqueSeq(s.Float())
+    schema.to_yaml([1.2, 1.2])  # ER: .*YAMLSerializationError.*Expecting all unique items, but duplicates were found in '\[1\.2, 1\.2\]'\.
+
+    # Mapping, not Sequence. _should_be_list --> YAMLSerializationError
+    schema.to_yaml({"x": 1.2})  # ER: .*YAMLSerializationError.*Expected a list, found '[\s\S]*'
+
+    # Expecting non-empty list. _should_be_list --> YAMLSerializationError
+    schema.to_yaml([])  # ER: .*YAMLSerializationError.*Expected a non-empty list, found an empty list\.[\s\S]*Use EmptyList validator to serialize empty lists\.
+
+- case: compound_uniqueseq_set
+  expect_fail: yes
+  regex: yes
+  main: |
+    import textwrap
+    from typing_extensions import assert_type
+    import strictyaml as s
+    from strictyaml.comments import CommentedSeq
+    from strictyaml.exceptions import YAMLSerializationError
+    from strictyaml.representation import YAML
+
+    # Python set
+    yaml_0 = textwrap.dedunt("""
+        allowed_keys: !!set
+          ? admin
+          ? editor
+          ? viewer
+    """)
+    # ruamel !!set --> CommentedSet
+    # s.UniqueSeq coerses !!set --> CommentedSeq
+    schema_0 = s.Map({"allowed_keys": s.UniqueSeq(s.Str())})
+    result_0: YAML = s.load(yaml_0, schema_0)
+    # There is no YAML.is_set method
+    val = result_0.contents["allowed_keys"]
+    assert isinstance(val, CommentedSeq)
+    # (runtime) CommentedSeq.__eq__ coerses to list
+    assert val == ["admin", "editor", "viewer"]

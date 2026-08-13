@@ -1,0 +1,10 @@
+- case: parsing_special_characters_65
+  expect_fail: yes
+  regex: yes
+  main: |
+    import strictyaml as s
+
+    # https://github.com/crdoconnor/strictyaml/issues/65
+    yaml_string = "\x00"
+    # strictyaml.ruamel.reader.ReaderError: unacceptable character #x0000: special characters are not allowed
+    s.load(yaml_string)  # ER: AttributeError: 'ReaderError' object has no attribute 'context_mark'.*

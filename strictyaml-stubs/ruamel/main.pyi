@@ -7,10 +7,7 @@ from typing import (
 
 from typing_extensions import TypeAlias
 
-from .compat import (
-    StreamTextType,
-    VersionType,
-)
+from .compat import VersionType
 from .composer import Composer as Composer_
 from .constructor import BaseConstructor as BaseConstructor_
 from .constructor import Constructor as Constructor_
@@ -27,6 +24,8 @@ from .resolver import VersionedResolver as VersionedResolver_
 from .scanner import RoundTripScanner as RoundTripScanner_
 from .scanner import Scanner as Scanner_
 from .serializer import Serializer as Serializer_
+
+from .._types import ReadableFile, StreamType  # isort: skip
 
 # isort: off
 try:
@@ -53,8 +52,6 @@ except ImportError:
         CParser: TypeAlias = None  # type: ignore[no-redef]
         CEmitter: TypeAlias = None  # type: ignore[no-redef]
 # isort: on
-
-StreamType: TypeAlias = Any
 
 enforce: Final[Any]
 enc: str | None
@@ -100,7 +97,7 @@ class YAML:
     # #####
     # Did not confirm the rest
     # #####
-    stream: Any | None
+    stream: StreamType | None
     canonical: Any | None
     old_indent: Any | None
     width: Any | None
@@ -153,27 +150,30 @@ class YAML:
     def serializer(self) -> Any: ...
     @property
     def representer(self) -> Any: ...
-    def load(self, stream: Path | StreamTextType) -> Any: ...
-    def load_all(self, stream: Path | StreamTextType, _kw: Any | None = ...) -> Any: ...
-    def get_constructor_parser(self, stream: StreamTextType) -> Any: ...
+    def load(self, stream: StreamType) -> Any: ...
+    def load_all(self, stream: StreamType, _kw: Any | None = ...) -> Any: ...
+    def get_constructor_parser(
+        self,
+        stream: ReadableFile[str] | ReadableFile[bytes],
+    ) -> Any: ...
     def dump(
         self,
         data: Any,
-        stream: Path | StreamType = None,
+        stream: StreamType | None = None,
         _kw: Any | None = ...,
         transform: Any | None = None,
     ) -> Any: ...
     def dump_all(
         self,
         documents: Any,
-        stream: Path | StreamType,
+        stream: StreamType,
         _kw: Any | None = ...,
         transform: Any | None = ...,
     ) -> Any: ...
     def Xdump_all(
         self,
         documents: Any,
-        stream: Path | Any,
+        stream: StreamType,
         _kw: Any | None = ...,
         transform: Any | None = None,
     ) -> Any: ...
@@ -186,7 +186,10 @@ class YAML:
     def seq(self, *args: Any) -> Any: ...
     def official_plug_ins(self) -> Any: ...
     def register_class(self, cls: Any) -> Any: ...
-    def parse(self, stream: StreamTextType) -> Any: ...
+    def parse(
+        self,
+        stream: ReadableFile[str] | ReadableFile[bytes],
+    ) -> Any: ...
     def __enter__(self) -> Any: ...
     def __exit__(
         self,
@@ -209,33 +212,49 @@ class YAML:
     ) -> None: ...
 
 def yaml_object(yml: Any) -> Any: ...
-def scan(stream: StreamTextType, Loader: Any = ...) -> Any: ...
-def parse(stream: StreamTextType, Loader: Any = ...) -> Any: ...
-def compose(stream: StreamTextType, Loader: Any = ...) -> Any: ...
-def compose_all(stream: StreamTextType, Loader: Any = ...) -> Any: ...
+def scan(
+    stream: ReadableFile[str] | ReadableFile[bytes],
+    Loader: Any = ...,
+) -> Any: ...
+def parse(
+    stream: ReadableFile[str] | ReadableFile[bytes],
+    Loader: Any = ...,
+) -> Any: ...
+def compose(
+    stream: ReadableFile[str] | ReadableFile[bytes],
+    Loader: Any = ...,
+) -> Any: ...
+def compose_all(
+    stream: ReadableFile[str] | ReadableFile[bytes],
+    Loader: Any = ...,
+) -> Any: ...
 def load(
-    stream: StreamTextType,
+    stream: ReadableFile[str] | ReadableFile[bytes],
     Loader: Any | None = None,
     version: VersionType | None = None,
     preserve_quotes: Any | None = None,
 ) -> Any: ...
 def load_all(
-    stream: StreamTextType | None,
+    stream: ReadableFile[str] | ReadableFile[bytes] | None,
     Loader: Any | None = None,
     version: VersionType | None = None,
     preserve_quotes: bool | None = None,
 ) -> Any: ...
-def safe_load(stream: StreamTextType, version: VersionType | None = None) -> Any: ...
+def safe_load(
+    stream: ReadableFile[str] | ReadableFile[bytes],
+    version: VersionType | None = None,
+) -> Any: ...
 def safe_load_all(
-    stream: StreamTextType, version: VersionType | None = None
+    stream: ReadableFile[str] | ReadableFile[bytes],
+    version: VersionType | None = None,
 ) -> Any: ...
 def round_trip_load(
-    stream: StreamTextType,
+    stream: ReadableFile[str] | ReadableFile[bytes],
     version: VersionType | None = None,
     preserve_quotes: bool | None = None,
 ) -> Any: ...
 def round_trip_load_all(
-    stream: StreamTextType,
+    stream: ReadableFile[str] | ReadableFile[bytes],
     version: VersionType | None = None,
     preserve_quotes: bool | None = None,
 ) -> Any: ...

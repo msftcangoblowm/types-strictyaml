@@ -5,10 +5,12 @@ from typing import (
     ClassVar,
 )
 
+from .comments import CommentedMap
 from .error import (
     MarkedYAMLError,
     MarkedYAMLFutureWarning,
 )
+from .nodes import MappingNode
 from .util import LazyEval
 
 __all__ = (
@@ -155,12 +157,13 @@ class RoundTripConstructor(SafeConstructor):
     ) -> Any: ...
     def flatten_mapping(self, node: Any) -> Any: ...
     def _sentinel(self) -> None: ...
+    # Parent classes have an rtype, but not this method!
     def construct_mapping(  # type: ignore[override]
         self,
-        node: Any,
-        maptyp: Any,
+        node: MappingNode,
+        maptyp: CommentedMap,
         deep: bool | None = False,
-    ) -> Any: ...
+    ) -> None: ...
     def construct_setting(
         self,
         node: Any,

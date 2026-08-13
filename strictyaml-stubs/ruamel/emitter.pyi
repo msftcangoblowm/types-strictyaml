@@ -3,13 +3,11 @@ from typing import (
     ClassVar,
 )
 
-from typing_extensions import TypeAlias
-
 from .error import YAMLError
 
-__all__ = ["Emitter", "EmitterError"]
+from .._types import StreamType  # isort: skip
 
-StreamType: TypeAlias = Any
+__all__ = ["Emitter", "EmitterError"]
 
 class EmitterError(YAMLError): ...
 

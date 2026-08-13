@@ -62,17 +62,24 @@ help:					## (Default) Display this help -- Always up to date
 
 #run all pre-commit checks
 .PHONY: pre-commit
+pre-commit: private target_tty = $(if $(show),1,0)
 pre-commit:				## Run checks found in .pre-commit-config.yaml
 	@out=$$(SKIP=pyright pre-commit run --all-files ||:)
+	if [[ $(target_tty) -eq 1 ]]; then
+	echo "$$out" | /bin/tee -a /tmp/out.txt
+	else
 	echo "$$out" > /tmp/out.txt
+	fi
 
 .PHONY: update-pre-commit
 update-pre-commit:		## Bump package to latest version
 	@pre-commit autoupdate
 
+# @out=$$(pre-commit run --all-files pyright ||:)
+# run against strictyaml, not types-strictyaml
 .PHONY: preright
 preright:				## Run pyright
-	@out=$$(pre-commit run --all-files pyright ||:)
+	@out=$$(PYRIGHT_PYTHON_CACHE_DIR=/tmp/.cache/pyright PYRIGHT_PYTHON_FORCE_VERSION=latest pyright -p pyright-custom-config.json . ||:)
 	echo "$$out" > /tmp/out.txt
 
 .PHONY: premypy

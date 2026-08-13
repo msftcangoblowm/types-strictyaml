@@ -1,17 +1,23 @@
+from collections.abc import Callable
 from typing import (
     Any,
     ClassVar,
 )
 
 from strictyaml.representation import YAML
+from strictyaml.ruamel.comments import CommentedMap
 from strictyaml.ruamel.compat import VersionType
 from strictyaml.ruamel.composer import Composer
 from strictyaml.ruamel.constructor import RoundTripConstructor
+from strictyaml.ruamel.nodes import MappingNode
 from strictyaml.ruamel.parser import RoundTripParser
 from strictyaml.ruamel.reader import Reader
 from strictyaml.ruamel.resolver import VersionedResolver
 from strictyaml.ruamel.scanner import RoundTripScanner
+from strictyaml.ruamel.tokens import Token
 from strictyaml.validators import Validator
+
+from ._types import StreamType  # isort: skip
 
 __all__ = (
     "StrictYAMLConstructor",
@@ -23,17 +29,17 @@ __all__ = (
 )
 
 class StrictYAMLConstructor(RoundTripConstructor):
-    yaml_constructors: ClassVar[dict[Any, Any]] = ...
+    yaml_constructors: ClassVar[dict[str | None, Callable[..., CommentedMap]]] = ...
 
     def construct_mapping(  # type: ignore[override]
         self,
-        node: Any,
-        maptyp: Any,
+        node: MappingNode,
+        maptyp: CommentedMap,
         deep: bool | None = False,
     ) -> None: ...
 
 class StrictYAMLScanner(RoundTripScanner):
-    def check_token(self, *choices: Any) -> bool: ...
+    def check_token(self, *choices: type[Token]) -> bool: ...
 
 class StrictYAMLLoader(
     Reader,
@@ -45,7 +51,7 @@ class StrictYAMLLoader(
 ):
     def __init__(
         self,
-        stream: Any,
+        stream: StreamType,
         version: VersionType | None = None,  # pyright: ignore[reportInvalidTypeForm]
         preserve_quotes: bool | None = None,
     ) -> None: ...
@@ -56,19 +62,19 @@ def as_document(
     label: str | None = ...,
 ) -> YAML: ...
 def generic_load(
-    yaml_string: Any,
+    yaml_string: StreamType,
     schema: Validator | None = None,
     label: str | None = ...,
     allow_flow_style: bool | None = False,
 ) -> YAML: ...
 def dirty_load(
-    yaml_string: Any,
+    yaml_string: StreamType,
     schema: Validator | None = None,
     label: str | None = ...,
     allow_flow_style: bool | None = False,
 ) -> YAML: ...
 def load(
-    yaml_string: Any,
+    yaml_string: StreamType,
     schema: Validator | None = None,
     label: str | None = ...,
 ) -> YAML: ...

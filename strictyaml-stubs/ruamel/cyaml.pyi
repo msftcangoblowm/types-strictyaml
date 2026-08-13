@@ -1,11 +1,6 @@
 from typing import Any
 
-from typing_extensions import TypeAlias
-
-from .compat import (
-    StreamTextType,
-    VersionType,
-)
+from .compat import VersionType
 from .constructor import (
     BaseConstructor,
     Constructor,
@@ -27,6 +22,8 @@ from .resolver import (
     Resolver,
 )
 
+from .._types import ReadableFile, StreamType  # isort: skip
+
 __all__ = [
     "CBaseLoader",
     "CSafeLoader",
@@ -36,12 +33,10 @@ __all__ = [
     "CDumper",
 ]
 
-StreamType: TypeAlias = Any
-
 class CBaseLoader(CParser, BaseConstructor, BaseResolver):  # type: ignore
     def __init__(
         self,
-        stream: StreamTextType,
+        stream: ReadableFile[str],
         version: VersionType | None = None,
         preserve_quotes: bool | None = None,
     ) -> None: ...
@@ -49,7 +44,7 @@ class CBaseLoader(CParser, BaseConstructor, BaseResolver):  # type: ignore
 class CSafeLoader(CParser, SafeConstructor, Resolver):  # type: ignore
     def __init__(
         self,
-        stream: StreamTextType,
+        stream: ReadableFile[str],
         version: VersionType | None = None,
         preserve_quotes: bool | None = None,
     ) -> None: ...
@@ -57,7 +52,7 @@ class CSafeLoader(CParser, SafeConstructor, Resolver):  # type: ignore
 class CLoader(CParser, Constructor, Resolver):  # type: ignore
     def __init__(
         self,
-        stream: StreamTextType,
+        stream: ReadableFile[str],
         version: VersionType | None = None,
         preserve_quotes: bool | None = None,
     ) -> None: ...

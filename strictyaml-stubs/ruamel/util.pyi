@@ -4,7 +4,7 @@ from typing import Any
 
 from typing_extensions import TypeAlias
 
-from .compat import StreamTextType
+from .._types import ReadableFile  # isort: skip
 
 __all__ = ("RegExp", "load_yaml_guess_indent", "configobj_walker")
 
@@ -38,6 +38,9 @@ regex_instance: PatternStr = compile_regex(r"\d+")
 regex_wrapper: LazyEval = compile_regex(r"\d+")
 """
 
-def load_yaml_guess_indent(stream: StreamTextType, **kw: Any) -> Any: ...
+def load_yaml_guess_indent(
+    stream: ReadableFile[str] | ReadableFile[bytes],
+    **kw: Any,
+) -> Any: ...
 def configobj_walker(cfg: Any) -> Any: ...
 def _walk_section(s: Any, level: int = 0) -> Any: ...

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "types-strictyaml"
-version = "1.7.3.1"
+version = "1.7.3.2"
 readme = "README.rst"
 requires-python = ">=3.10"
 description = "Typing stubs for strictyaml"
@@ -114,6 +114,7 @@ extend_ignore = """
     W605,
     W293,
     W291,
+    Y021,
 """
 exclude = ".venv,.git,.tox,dist,docs,build"
 application-import-names = "strictyaml_stubs,tests"

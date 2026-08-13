@@ -1,0 +1,54 @@
+- case: parser_as_document_with_schema
+  main: |
+    import strictyaml as s
+    from strictyaml.representation import YAML
+    from strictyaml.validators import MapValidator
+    from typing_extensions import assert_type
+
+    # Without schema and with label. 1 treated as a str, not int
+    yaml = s.as_document({"x": 1}, label="one")
+    assert_type(yaml, YAML)
+    assert repr(yaml) == "YAML({'x': '1'})"
+
+    # With schema. strictyaml treats 1 as int, not str
+    schema = s.Map({"x": s.Int()})
+    str_yaml = s.as_document({"x": 1}, schema=schema).as_yaml()
+    assert_type(schema, s.Map)
+    assert issubclass(type(schema), MapValidator)
+    assert_type(str_yaml, str)
+    assert str_yaml == 'x: 1\n'
+
+# strictyaml/hitch/story/dirty-load.story
+- case: parser_dirty_load
+  expect_fail: yes
+  regex: yes
+  main: |
+    import textwrap
+    from typing import Any
+    import strictyaml as s
+    from strictyaml.representation import YAML
+    from strictyaml import ruamel as ruamelyaml
+    from typing_extensions import assert_type
+
+    schema = s.Map({"foo": s.Map({"a": s.Any(), "b": s.Any(), "c": s.Any()}), "y": s.MapPattern(s.Str(), s.Str()), "z": s.Seq(s.Str())})
+    assert_type(schema, s.Map)
+    yaml_snippet = textwrap.dedent("""\
+        foo: { a: 1, b: 2, c: 3 }
+        y: {}
+        z: []
+    """)
+    assert_type(yaml_snippet, str)
+    yaml_0 = s.dirty_load(yaml_snippet, schema, allow_flow_style=True)
+    assert_type(yaml_0, YAML)
+    assert_type(yaml_0.data, "dict[Any, Any] | list[Any] | str | Any")
+    assert yaml_0.data == {"foo": {"a": "1", "b": "2", "c": "3"}, "y": {}, "z": []}
+
+    # s.load does not allow flow style
+    s.load(yaml_snippet, schema)  # ER: strictyaml.exceptions.FlowMappingDisallowed: While scanning[\s\S]*Found ugly disallowed JSONesque flow mapping[\s\S]*
+
+    # generic_load
+    s.load(123)  # ER: TypeError: StrictYAML can only read a string of valid YAML.
+
+    # generic_load -- invalid YAML snippet
+    yaml_snippet_invalid = "foo: { a: 1, b: 2, c: & -}"
+    s.load(yaml_snippet_invalid, schema)  # ER: ruamelyaml.YAMLError: [\s\S]*

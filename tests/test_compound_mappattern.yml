@@ -1,0 +1,69 @@
+- case: compound_mappattern_constructor
+  expect_fail: yes
+  regex: yes
+  main: |
+    import strictyaml as s
+    from strictyaml.exceptions import YAMLValidationError
+    from strictyaml.ruamel.comments import CommentedMap
+    from strictyaml.scalar import ScalarValidator
+    from strictyaml.validators import Validator
+    from typing_extensions import assert_type
+
+    key_validator_0 = s.Map(s.Str(), key_validator=s.Bool() | s.Int())
+    value_validator_0 = s.Float()
+
+    # key validator: ScalarValidator
+    schema_0 = s.MapPattern(  # ER: .*AssertionError.*key_validator must be ScalarValidator
+        key_validator_0,
+        value_validator_0,
+    )
+    schema_1 = s.MapPattern(  # ER: .*AssertionError.*value_validator must be Validator
+        value_validator_0,
+        1.2,
+    )
+    schema_2 = s.MapPattern(  # ER: .*AssertionError.*maximum_keys must be an integer
+        value_validator_0,
+        key_validator_0,
+        minimum_keys=1.2,
+    )
+    # typo in strictyaml. Not making a new mistake
+    schema_3 = s.MapPattern(  # ER: .*AssertionError.*maximum_keys must be an integer
+        s.Str(),
+        key_validator_0,
+        maximum_keys=1.2,
+    )
+    # MapPattern.key_validator property
+    schema_4 = s.MapPattern(
+        value_validator_0,
+        key_validator_0,
+    )
+    assert_type(schema_4.key_validator, Validator)
+
+    # repr(s.MapPattern)
+    assert_type(repr(schema_4), str)
+
+    # s.MapPattern.to_yaml
+    assert_type(schema_4.to_yaml({"1.2": {"a": True, "b": 1}}), CommentedMap)
+
+- case: compound_mappattern_validate
+  expect_fail: yes
+  regex: yes
+  main: |
+    import strictyaml as s
+    from strictyaml.exceptions import YAMLValidationError
+
+    # maximum_keys exceeded
+    schema_0 = s.MapPattern(s.Str(), s.Int(), maximum_keys=1)
+    s.load("a: 1\nb: 2", schema_0)  # ER: .*YAMLValidationError.*while parsing a mapping expected a maximum of 1 key, found 2\.
+
+    # minimum keys too low
+    schema_1 = s.MapPattern(s.Str(), s.Int(), minimum_keys=3)
+    s.load("a: 1\nb: 2", schema_1)  # ER: .*YAMLValidationError.*expected a maximum of 3 keys, found 2\.
+
+    # Key Type Mismatch: when expecting an integer (if key validator fails)
+    schema_3 = s.MapPattern(s.Int(), s.Int())
+    s.load("a: a\nb: a", schema_3)  # ER: .*YAMLValidationError.*when expecting an integer found an arbitrary integer
+
+    # Value Type Mismatch
+    schema_2 = s.MapPattern(s.Str(), s.Int())
+    s.load("a: 1\nb: 1.2", schema_2)
