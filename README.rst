@@ -11,15 +11,15 @@ Typing stubs for strictyaml
 
 \* Python 3.10 through 3.14
 
+**new in 1.7.3.2**
+
+narrow typing YAMLChunk._strictparsed YAMLChunk._ruamelparsed;
+stream typing; tests for compound;
+
 **new in 1.7.3.1**
 
 verify CommaSeparated and Enum (\#3);
 stubtest workflow and button;
-
-**new in 1.7.3.0**
-
-initial typing testsuite; tested against mypy pyright;
-publish to pypi;
 
 Why?
 -----
